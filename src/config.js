@@ -23,6 +23,8 @@ export const config = {
   verifyToken: process.env.META_VERIFY_TOKEN || '',
   appSecret: process.env.META_APP_SECRET || '',
   graphVersion: process.env.META_GRAPH_VERSION || 'v21.0',
+  // Overridden by the end-to-end test to point at a local stand-in for Graph.
+  graphApiBase: process.env.GRAPH_API_BASE || 'https://graph.facebook.com',
   whatsappPhoneNumberId: process.env.WHATSAPP_PHONE_NUMBER_ID || '',
   whatsappToken: process.env.WHATSAPP_TOKEN || '',
   pageToken: process.env.FB_PAGE_TOKEN || '',

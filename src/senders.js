@@ -1,6 +1,6 @@
 import { config } from './config.js';
 
-const graph = (pathname) => `https://graph.facebook.com/${config.graphVersion}/${pathname}`;
+const graph = (pathname) => `${config.graphApiBase}/${config.graphVersion}/${pathname}`;
 
 async function post(url, token, body) {
   const res = await fetch(url, {
