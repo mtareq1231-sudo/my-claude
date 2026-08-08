@@ -13,25 +13,31 @@ const tempStore = () => new Store(fs.mkdtempSync(path.join(os.tmpdir(), 'welcome
 // The real delay is 60s; these tests override it so they finish instantly.
 const scheduler = (store, options) => new Scheduler(store, 'hello', { delayMs: 0, ...options });
 
-test('the website is the call to action and gets a line of its own', () => {
+test('the message acknowledges the customer, then points at the website', () => {
   const text = buildWelcomeMessage({
     storeName: 'Warmup',
+    ackLine: 'تم استلام رسالتك، وسنرد عليك في أقرب وقت.',
     website: 'https://warmupjo.com',
     phone: '+962 79 222 5298',
-    closingLine: 'كيف يمكننا مساعدتك اليوم؟',
   });
 
-  assert.match(text, /أهلاً بك في Warmup/);
+  assert.match(text, /^أهلاً بك في Warmup 👋\nتم استلام رسالتك، وسنرد عليك في أقرب وقت\./);
   // The URL sits alone on its line so chat clients linkify and preview it.
-  assert.match(text, /🌐 تصفّح موقعنا واكتشف جميع منتجاتنا:\nhttps:\/\/warmupjo\.com\n/);
+  assert.match(text, /🌐 ولسهولة الطلب، تفضّل بزيارة موقعنا:\nhttps:\/\/warmupjo\.com\n/);
   // The phone stays a short secondary line, with no invitation of its own.
-  assert.match(text, /📞 للاستفسار: \+962 79 222 5298/);
-  assert.match(text, /كيف يمكننا مساعدتك اليوم؟$/);
+  assert.match(text, /📞 للاستفسار: \+962 79 222 5298$/);
+});
+
+test('the greeting stands alone when no acknowledgement is configured', () => {
+  const text = buildWelcomeMessage({ storeName: 'Warmup', ackLine: '' });
+  assert.match(text, /^أهلاً بك في Warmup 👋/);
+  assert.doesNotMatch(text, /undefined/);
 });
 
 test('the short message stays short — no policy lines unless asked for', () => {
   const text = buildWelcomeMessage({
     storeName: 'Warmup',
+    ackLine: 'تم استلام رسالتك، وسنرد عليك في أقرب وقت.',
     website: 'https://warmupjo.com',
     phone: '+962 79 222 5298',
     shipping: '',
@@ -65,7 +71,7 @@ test('an optional array field renders as a bulleted list under its label', () =>
 test('the phone line still reads correctly with no website above it', () => {
   const text = buildWelcomeMessage({ phone: '+962 79 222 5298' });
   assert.match(text, /📞 للاستفسار: \+962 79 222 5298/);
-  assert.doesNotMatch(text, /تصفّح موقعنا/);
+  assert.doesNotMatch(text, /بزيارة موقعنا/);
 });
 
 test('each customer is welcomed exactly once', async () => {

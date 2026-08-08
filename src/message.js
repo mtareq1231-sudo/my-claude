@@ -17,14 +17,14 @@ export function buildWelcomeMessage(business) {
   const lines = [];
 
   lines.push(business.storeName ? `أهلاً بك في ${business.storeName} 👋` : 'أهلاً بك 👋');
-  lines.push('شكراً لتواصلك معنا.');
+  if (business.ackLine) lines.push(business.ackLine);
   lines.push('');
 
   // The website is the call to action, so it gets the invitation and a line of
   // its own — on its own line the URL is a bigger tap target, and chat clients
   // are far more likely to attach a link preview card to it.
   if (business.website) {
-    lines.push('🌐 تصفّح موقعنا واكتشف جميع منتجاتنا:');
+    lines.push('🌐 ولسهولة الطلب، تفضّل بزيارة موقعنا:');
     lines.push(business.website);
     lines.push('');
   }

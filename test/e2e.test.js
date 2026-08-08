@@ -157,6 +157,7 @@ test('a WhatsApp message is answered after the delay, once', async () => {
   assert.equal(call.body.messaging_product, 'whatsapp');
   assert.equal(call.body.to, '962790000002');
   assert.match(call.body.text.body, /أهلاً بك في Warmup/);
+  assert.match(call.body.text.body, /تم استلام رسالتك/);
   assert.match(call.body.text.body, /https:\/\/warmupjo\.com/);
 
   // And once more after delivery — still just the one reply.
