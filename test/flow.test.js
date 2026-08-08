@@ -13,31 +13,46 @@ const tempStore = () => new Store(fs.mkdtempSync(path.join(os.tmpdir(), 'welcome
 // The real delay is 60s; these tests override it so they finish instantly.
 const scheduler = (store, options) => new Scheduler(store, 'hello', { delayMs: 0, ...options });
 
-test('the message carries website, phone, shipping and warranty', () => {
+test('the message leads with the website and the phone number', () => {
   const text = buildWelcomeMessage({
     storeName: 'Warmup',
     website: 'warmupjo.com',
     phone: '+962 79 222 5298',
-    shipping: '1-2 يوم عمل',
-    warranty: 'كفالة سنة كاملة',
+    closingLine: 'كيف يمكننا مساعدتك اليوم؟',
   });
 
-  assert.match(text, /Warmup/);
-  assert.match(text, /warmupjo\.com/);
+  assert.match(text, /أهلاً بك في Warmup/);
+  assert.match(text, /تصفّح موقعنا واكتشاف جميع منتجاتنا: warmupjo\.com/);
   assert.match(text, /\+962 79 222 5298/);
-  assert.match(text, /1-2 يوم عمل/);
-  assert.match(text, /كفالة سنة كاملة/);
+  assert.match(text, /كيف يمكننا مساعدتك اليوم؟$/);
 });
 
-test('omitted fields drop their line instead of printing blanks', () => {
-  const text = buildWelcomeMessage({ website: 'warmupjo.com' });
-  assert.match(text, /الموقع/);
-  assert.doesNotMatch(text, /للتواصل/);
-  assert.doesNotMatch(text, /الكفالة/);
+test('the short message stays short — no policy lines unless asked for', () => {
+  const text = buildWelcomeMessage({
+    storeName: 'Warmup',
+    website: 'warmupjo.com',
+    phone: '+962 79 222 5298',
+    shipping: '',
+    warranty: '',
+    returns: '',
+  });
+
+  for (const label of ['مدة التوصيل', 'الكفالة', 'الاسترجاع', 'أوقات العمل']) {
+    assert.doesNotMatch(text, new RegExp(label), `${label} should be absent`);
+  }
   assert.doesNotMatch(text, /undefined/);
 });
 
-test('an array field renders as a bulleted list under its label', () => {
+test('filling in an optional field brings its line back', () => {
+  const text = buildWelcomeMessage({
+    website: 'warmupjo.com',
+    warranty: 'كفالة سنة كاملة على جميع المنتجات',
+  });
+
+  assert.match(text, /🛡️ الكفالة: كفالة سنة كاملة على جميع المنتجات/);
+});
+
+test('an optional array field renders as a bulleted list under its label', () => {
   const text = buildWelcomeMessage({
     shipping: ['عمّان: 1-2 يوم عمل', 'باقي المحافظات: 2-4 أيام عمل'],
   });
@@ -45,8 +60,10 @@ test('an array field renders as a bulleted list under its label', () => {
   assert.match(text, /🚚 مدة التوصيل:\n {3}• عمّان: 1-2 يوم عمل\n {3}• باقي المحافظات: 2-4 أيام عمل/);
 });
 
-test('an empty array is treated as an absent field', () => {
-  assert.doesNotMatch(buildWelcomeMessage({ shipping: [] }), /مدة التوصيل/);
+test('the phone line stands alone when there is no website', () => {
+  const text = buildWelcomeMessage({ phone: '+962 79 222 5298' });
+  assert.match(text, /📞 للتواصل معنا: \+962 79 222 5298/);
+  assert.doesNotMatch(text, /أو التواصل/);
 });
 
 test('each customer is welcomed exactly once', async () => {

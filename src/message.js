@@ -1,12 +1,13 @@
 /**
  * Builds the welcome text sent to the customer.
  *
- * Every field is optional: leave it out of config/business.json (or set it to
- * an empty string) and its line disappears from the message. A field may also
- * hold an array, which renders as a bulleted list under its label — useful for
- * things like per-region delivery times.
+ * The message is deliberately short — a greeting, the website, the phone
+ * number. Details like shipping and warranty live behind optional fields that
+ * are empty by default: fill one in config/business.json and its line appears,
+ * blank it out and the line disappears. A field may also hold an array, which
+ * renders as bullets under its label.
  */
-function line(icon, label, value) {
+function optionalLine(icon, label, value) {
   if (!value || (Array.isArray(value) && value.length === 0)) return [];
   if (!Array.isArray(value)) return [`${icon} ${label}: ${value}`];
   return [`${icon} ${label}:`, ...value.map((item) => `   • ${item}`)];
@@ -16,18 +17,28 @@ export function buildWelcomeMessage(business) {
   const lines = [];
 
   lines.push(business.storeName ? `أهلاً بك في ${business.storeName} 👋` : 'أهلاً بك 👋');
-  lines.push('شكراً لتواصلك معنا، إليك كل التفاصيل:');
+  lines.push('شكراً لتواصلك معنا.');
   lines.push('');
 
-  lines.push(...line('🌐', 'الموقع', business.website));
-  lines.push(...line('📞', 'للتواصل', business.phone));
-  if (business.whatsapp && business.whatsapp !== business.phone) {
-    lines.push(...line('💬', 'واتساب', business.whatsapp));
+  if (business.website) {
+    lines.push(`🌐 يمكنك تصفّح موقعنا واكتشاف جميع منتجاتنا: ${business.website}`);
   }
-  lines.push(...line('🚚', 'مدة التوصيل', business.shipping));
-  lines.push(...line('🛡️', 'الكفالة', business.warranty));
-  lines.push(...line('🔄', 'الاسترجاع والاستبدال', business.returns));
-  lines.push(...line('🕐', 'أوقات العمل', business.workingHours));
+  if (business.phone) {
+    // Reads as a follow-on when the website line is there, and stands alone when it isn't.
+    const prefix = business.website ? 'أو التواصل معنا مباشرةً على' : 'للتواصل معنا';
+    lines.push(`📞 ${prefix}: ${business.phone}`);
+  }
+
+  const extras = [
+    ...optionalLine('🚚', 'مدة التوصيل', business.shipping),
+    ...optionalLine('🛡️', 'الكفالة', business.warranty),
+    ...optionalLine('🔄', 'الاسترجاع والاستبدال', business.returns),
+    ...optionalLine('🕐', 'أوقات العمل', business.workingHours),
+  ];
+  if (extras.length) {
+    lines.push('');
+    lines.push(...extras);
+  }
 
   if (business.closingLine) {
     lines.push('');
