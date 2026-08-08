@@ -13,25 +13,56 @@ const tempStore = () => new Store(fs.mkdtempSync(path.join(os.tmpdir(), 'welcome
 // The real delay is 60s; these tests override it so they finish instantly.
 const scheduler = (store, options) => new Scheduler(store, 'hello', { delayMs: 0, ...options });
 
-test('the message acknowledges the customer, then points at the website', () => {
+test('the message acknowledges the customer, then points at the shop', () => {
+  const text = buildWelcomeMessage({
+    storeName: 'Warmup',
+    ackLine: 'تم استلام رسالتك، وسنرد عليك في أقرب وقت.',
+    websiteCta: 'تسوّق الآن على موقعنا',
+    website: 'https://warmupjo.com',
+    phone: '+962 79 222 5298',
+  });
+
+  assert.match(text, /^أهلاً بك في Warmup\nتم استلام رسالتك، وسنرد عليك في أقرب وقت\./);
+  // The URL sits alone on its line so chat clients linkify and preview it.
+  assert.match(text, /تسوّق الآن على موقعنا:\nhttps:\/\/warmupjo\.com\n/);
+  // The phone stays a short secondary line, with no invitation of its own.
+  assert.match(text, /للاستفسار: \+962 79 222 5298$/);
+});
+
+test('the message carries no emoji', () => {
   const text = buildWelcomeMessage({
     storeName: 'Warmup',
     ackLine: 'تم استلام رسالتك، وسنرد عليك في أقرب وقت.',
     website: 'https://warmupjo.com',
     phone: '+962 79 222 5298',
+    shipping: ['عمّان: 1-2 يوم عمل'],
+    warranty: 'كفالة سنة',
+    returns: 'خلال 14 يوماً',
+    workingHours: '10 ص - 10 م',
   });
 
-  assert.match(text, /^أهلاً بك في Warmup 👋\nتم استلام رسالتك، وسنرد عليك في أقرب وقت\./);
-  // The URL sits alone on its line so chat clients linkify and preview it.
-  assert.match(text, /🌐 ولسهولة الطلب، تفضّل بزيارة موقعنا:\nhttps:\/\/warmupjo\.com\n/);
-  // The phone stays a short secondary line, with no invitation of its own.
-  assert.match(text, /📞 للاستفسار: \+962 79 222 5298$/);
+  assert.doesNotMatch(text, /\p{Extended_Pictographic}/u);
 });
 
 test('the greeting stands alone when no acknowledgement is configured', () => {
   const text = buildWelcomeMessage({ storeName: 'Warmup', ackLine: '' });
-  assert.match(text, /^أهلاً بك في Warmup 👋/);
+  assert.match(text, /^أهلاً بك في Warmup/);
   assert.doesNotMatch(text, /undefined/);
+});
+
+test('the call to action falls back to a sensible default when unset', () => {
+  const text = buildWelcomeMessage({ website: 'https://warmupjo.com' });
+  assert.match(text, /تسوّق الآن على موقعنا:/);
+});
+
+test('a custom call to action replaces the default wording', () => {
+  const text = buildWelcomeMessage({
+    website: 'https://warmupjo.com',
+    websiteCta: 'اطلب دلوقتي من الموقع',
+  });
+
+  assert.match(text, /اطلب دلوقتي من الموقع:/);
+  assert.doesNotMatch(text, /تسوّق الآن/);
 });
 
 test('the short message stays short — no policy lines unless asked for', () => {
@@ -57,7 +88,7 @@ test('filling in an optional field brings its line back', () => {
     warranty: 'كفالة سنة كاملة على جميع المنتجات',
   });
 
-  assert.match(text, /🛡️ الكفالة: كفالة سنة كاملة على جميع المنتجات/);
+  assert.match(text, /الكفالة: كفالة سنة كاملة على جميع المنتجات/);
 });
 
 test('an optional array field renders as a bulleted list under its label', () => {
@@ -65,13 +96,17 @@ test('an optional array field renders as a bulleted list under its label', () =>
     shipping: ['عمّان: 1-2 يوم عمل', 'باقي المحافظات: 2-4 أيام عمل'],
   });
 
-  assert.match(text, /🚚 مدة التوصيل:\n {3}• عمّان: 1-2 يوم عمل\n {3}• باقي المحافظات: 2-4 أيام عمل/);
+  assert.match(text, /مدة التوصيل:\n• عمّان: 1-2 يوم عمل\n• باقي المحافظات: 2-4 أيام عمل/);
+});
+
+test('an empty array is treated as an absent field', () => {
+  assert.doesNotMatch(buildWelcomeMessage({ shipping: [] }), /مدة التوصيل/);
 });
 
 test('the phone line still reads correctly with no website above it', () => {
   const text = buildWelcomeMessage({ phone: '+962 79 222 5298' });
-  assert.match(text, /📞 للاستفسار: \+962 79 222 5298/);
-  assert.doesNotMatch(text, /بزيارة موقعنا/);
+  assert.match(text, /للاستفسار: \+962 79 222 5298/);
+  assert.doesNotMatch(text, /تسوّق الآن/);
 });
 
 test('each customer is welcomed exactly once', async () => {
