@@ -20,13 +20,18 @@ export function buildWelcomeMessage(business) {
   lines.push('شكراً لتواصلك معنا.');
   lines.push('');
 
+  // The website is the call to action, so it gets the invitation and a line of
+  // its own — on its own line the URL is a bigger tap target, and chat clients
+  // are far more likely to attach a link preview card to it.
   if (business.website) {
-    lines.push(`🌐 يمكنك تصفّح موقعنا واكتشاف جميع منتجاتنا: ${business.website}`);
+    lines.push('🌐 تصفّح موقعنا واكتشف جميع منتجاتنا:');
+    lines.push(business.website);
+    lines.push('');
   }
+
+  // The phone is the fallback, not the ask: one short line, no invitation.
   if (business.phone) {
-    // Reads as a follow-on when the website line is there, and stands alone when it isn't.
-    const prefix = business.website ? 'أو التواصل معنا مباشرةً على' : 'للتواصل معنا';
-    lines.push(`📞 ${prefix}: ${business.phone}`);
+    lines.push(`📞 للاستفسار: ${business.phone}`);
   }
 
   const extras = [
