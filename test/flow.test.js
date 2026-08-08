@@ -15,25 +15,38 @@ const scheduler = (store, options) => new Scheduler(store, 'hello', { delayMs: 0
 
 test('the message carries website, phone, shipping and warranty', () => {
   const text = buildWelcomeMessage({
-    storeName: 'متجر تجريبي',
-    website: 'https://shop.example',
-    phone: '+201000000000',
-    shipping: '2 إلى 5 أيام',
-    warranty: 'ضمان سنة',
+    storeName: 'Warmup',
+    website: 'warmupjo.com',
+    phone: '+962 79 222 5298',
+    shipping: '1-2 يوم عمل',
+    warranty: 'كفالة سنة كاملة',
   });
 
-  assert.match(text, /متجر تجريبي/);
-  assert.match(text, /https:\/\/shop\.example/);
-  assert.match(text, /\+201000000000/);
-  assert.match(text, /2 إلى 5 أيام/);
-  assert.match(text, /ضمان سنة/);
+  assert.match(text, /Warmup/);
+  assert.match(text, /warmupjo\.com/);
+  assert.match(text, /\+962 79 222 5298/);
+  assert.match(text, /1-2 يوم عمل/);
+  assert.match(text, /كفالة سنة كاملة/);
 });
 
 test('omitted fields drop their line instead of printing blanks', () => {
-  const text = buildWelcomeMessage({ website: 'https://shop.example' });
+  const text = buildWelcomeMessage({ website: 'warmupjo.com' });
   assert.match(text, /الموقع/);
-  assert.doesNotMatch(text, /رقم التواصل/);
+  assert.doesNotMatch(text, /للتواصل/);
+  assert.doesNotMatch(text, /الكفالة/);
   assert.doesNotMatch(text, /undefined/);
+});
+
+test('an array field renders as a bulleted list under its label', () => {
+  const text = buildWelcomeMessage({
+    shipping: ['عمّان: 1-2 يوم عمل', 'باقي المحافظات: 2-4 أيام عمل'],
+  });
+
+  assert.match(text, /🚚 مدة التوصيل:\n {3}• عمّان: 1-2 يوم عمل\n {3}• باقي المحافظات: 2-4 أيام عمل/);
+});
+
+test('an empty array is treated as an absent field', () => {
+  assert.doesNotMatch(buildWelcomeMessage({ shipping: [] }), /مدة التوصيل/);
 });
 
 test('each customer is welcomed exactly once', async () => {
