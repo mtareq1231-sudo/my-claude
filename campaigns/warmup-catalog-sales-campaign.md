@@ -2,7 +2,16 @@
 
 **Store:** Warmup — warmupjo.com (Jordan, JOD, EEST)
 **Requested:** Sales campaign, Shopify catalog, message destination to Calls and WhatsApp
-**Status:** ⛔ Blocked — cannot launch yet. Prerequisites below.
+**Status:** ⛔ Blocked on owner setup (§7). Structure and decisions are locked; build starts as soon as setup lands.
+
+## Decisions taken
+
+| Decision | Choice |
+|---|---|
+| Ad account | **New JOD account** under `warmup_jo` — matches store currency, avoids permanent reporting mismatch |
+| Catalog source | **Shopify Facebook & Instagram sales channel** — continuous price/stock sync |
+| Catalog scope | **All 69 active products** |
+| Pixel | **`1527928829106094`** — the only dataset actually firing (see §6b) |
 
 ---
 
@@ -57,18 +66,20 @@ Prefer the **Facebook & Instagram sales channel app** in Shopify admin over an A
 - creates the catalog under the correct business and links the Meta pixel/dataset in the same flow
 - fixes B2 and gives the pixel needed for ad set A2 in one step
 
-Catalog scope to decide: **all 69 active products**, or the **17 tagged `meta-sync`**.
-The `meta-sync` tag looks like a deliberate subset, so it is the safer default.
+Scope: **all 69 active products** (decided). The `meta-sync` tag on 17 of them is not used as a filter.
 
-Note: `ارضيات فوم (2.5cm)` is priced at **0.000 JOD** and `بنش متحرك ثقيل` has **0 inventory** —
-both would be rejected or suppressed by Meta catalog validation. Fix before syncing.
+**Two products will fail Meta catalog validation — fix in Shopify before syncing:**
 
-## 5. Open decisions
+| Product | Problem |
+|---|---|
+| `ارضيات فوم (2.5cm)` (`ارضيات-فوم-2-5cm`) | price is **0.000 JOD** — Meta rejects zero-price items |
+| `بنش متحرك ثقيل` (`بنش-متحرك-ثقيل`) | **0 inventory** — syncs as `out of stock`, never serves |
 
-1. Which ad account — `warmup jordan` (EGP, no payment method), or a different/new JOD account?
-2. Catalog via Shopify sales channel (recommended) or API-built now?
-3. Catalog scope — all 69 active, or the 17 `meta-sync` products?
-4. Daily budget, WhatsApp business number, and the phone number for call ads.
+## 5. Still needed from you
+
+- Daily budget (campaign-level, CBO)
+- WhatsApp Business number to receive messages
+- Phone number for the call ads
 
 ## 6. Reference — account inventory
 
@@ -80,3 +91,29 @@ both would be rejected or suppressed by Meta catalog validation. Fix before sync
 | Atelier Salma Elsareef | 1223373786443814 | EGP | ✓ | Atelier Salma Elsareef |
 | (unnamed) | 1819698555145882 | USD | ✓ | leader.jo__official |
 | (unnamed) | 1932190657582170 | USD | ✓ | — |
+
+### 6b. Datasets (pixels) under warmup_jo — needs cleanup
+
+Five datasets exist for one business. Only **one is receiving events**:
+
+| Dataset | ID | Last fired |
+|---|---|---|
+| warmup_jo's pixel | **1527928829106094** | **2026-08-09 — live, use this one** |
+| warmup_jo's pixel | 1375770671113797 | 2026-08-04 |
+| warmup_jo's pixel | 28143430988679834 | never |
+| warmup_jo's pixel | 2235806020157388 | never |
+| warmup jordan | 1054515230383520 | never |
+
+Five pixels on one store fragments conversion signal and weakens optimisation. Point the Shopify
+sales channel at `1527928829106094` and remove the three that have never fired.
+
+## 7. Owner setup checklist (blocks the build)
+
+1. **Create a Warmup Facebook Page** — required for both WhatsApp and call ads. Connect the WhatsApp
+   Business number to it (Page → Settings → WhatsApp).
+2. **Create a JOD ad account** under business `warmup_jo` in Business Settings, and add a payment
+   method. Currency is permanent — confirm JOD at creation.
+3. **Install the Facebook & Instagram sales channel** in Shopify admin; connect it to `warmup_jo`,
+   the new Page, and pixel `1527928829106094`. This creates and syncs the catalog.
+4. **Fix the two products** in §4.
+5. Send me the new ad account ID, Page ID, daily budget, WhatsApp number, and call phone number.
