@@ -1,0 +1,58 @@
+{% comment %}
+  Meta Pixel — "warmup jordan" (dataset ID 1054515230383520)
+  This pixel is accessible from the "habibi" ad account (1932190657582170).
+
+  Install: copy this file to snippets/meta-pixel.liquid in the live theme,
+  then add {% render 'meta-pixel' %} inside <head> in layout/theme.liquid
+  (right before {{ content_for_header }}).
+
+  Covers: PageView, ViewContent (product pages), Search, AddToCart,
+  InitiateCheckout. Purchase cannot fire from theme code — checkout pages
+  are locked by Shopify; use the Facebook & Instagram app (Conversions API)
+  for Purchase tracking.
+{% endcomment %}
+<script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '1054515230383520');
+  fbq('track', 'PageView');
+
+  {%- if template contains 'product' and product %}
+  fbq('track', 'ViewContent', {
+    content_ids: ['{{ product.selected_or_first_available_variant.id }}'],
+    content_name: {{ product.title | json }},
+    content_type: 'product',
+    value: {{ product.selected_or_first_available_variant.price | money_without_currency | remove: ',' | json }},
+    currency: '{{ cart.currency.iso_code }}'
+  });
+  {%- endif %}
+
+  {%- if template contains 'search' %}
+  fbq('track', 'Search', { search_string: {{ search.terms | json }} });
+  {%- endif %}
+
+  (function () {
+    var origFetch = window.fetch;
+    window.fetch = function () {
+      try {
+        var url = arguments[0] && (arguments[0].url || arguments[0]);
+        if (typeof url === 'string' && url.indexOf('/cart/add') !== -1) {
+          fbq('track', 'AddToCart', { currency: '{{ cart.currency.iso_code }}' });
+        }
+      } catch (e) {}
+      return origFetch.apply(this, arguments);
+    };
+    document.addEventListener('click', function (e) {
+      var el = e.target && e.target.closest
+        && e.target.closest('a[href*="/checkout"], button[name="checkout"]');
+      if (el) fbq('track', 'InitiateCheckout');
+    }, true);
+  })();
+</script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1054515230383520&ev=PageView&noscript=1"/></noscript>
