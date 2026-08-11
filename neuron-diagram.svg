@@ -1,10 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 890 447" font-family="Arial, Helvetica, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" width="890" height="447" viewBox="0 0 890 447" font-family="Arial, Helvetica, sans-serif">
   <!-- Background -->
   <rect x="0" y="0" width="890" height="447" rx="10" fill="#f4f4f2"/>
 
   <defs>
     <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5"
-            markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+            markerWidth="8" markerHeight="8" orient="auto">
       <path d="M 0 0 L 10 5 L 0 10 z" fill="#1a1a1a"/>
     </marker>
   </defs>
@@ -14,9 +14,9 @@
   <circle cx="130" cy="195" r="33" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.5"/>
   <circle cx="130" cy="330" r="33" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.5"/>
 
-  <text x="124" y="93"  font-size="26" font-weight="bold" fill="#1a1a1a" text-anchor="middle">X<tspan baseline-shift="-6" font-size="17">1</tspan></text>
-  <text x="124" y="203" font-size="26" font-weight="bold" fill="#1a1a1a" text-anchor="middle">X<tspan baseline-shift="-6" font-size="17">2</tspan></text>
-  <text x="124" y="338" font-size="26" font-weight="bold" fill="#1a1a1a" text-anchor="middle">X<tspan baseline-shift="-6" font-size="17">n</tspan></text>
+  <text x="124" y="93"  font-size="26" font-weight="bold" fill="#1a1a1a" text-anchor="middle">X<tspan dy="6" font-size="17">1</tspan></text>
+  <text x="124" y="203" font-size="26" font-weight="bold" fill="#1a1a1a" text-anchor="middle">X<tspan dy="6" font-size="17">2</tspan></text>
+  <text x="124" y="338" font-size="26" font-weight="bold" fill="#1a1a1a" text-anchor="middle">X<tspan dy="6" font-size="17">n</tspan></text>
 
   <!-- Dashed line between X2 and Xn -->
   <line x1="130" y1="232" x2="130" y2="293" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="4 5"/>
@@ -31,9 +31,9 @@
   <line x1="161" y1="317" x2="352" y2="253" stroke="#1a1a1a" stroke-width="1.8" marker-end="url(#arrow)"/>
 
   <!-- Weight labels -->
-  <text x="212" y="128" font-size="19" font-weight="bold" fill="#1a1a1a">w<tspan baseline-shift="-5" font-size="13">1</tspan></text>
-  <text x="212" y="192" font-size="19" font-weight="bold" fill="#1a1a1a">w<tspan baseline-shift="-5" font-size="13">2</tspan></text>
-  <text x="212" y="288" font-size="19" font-weight="bold" fill="#1a1a1a">w<tspan baseline-shift="-5" font-size="13">n</tspan></text>
+  <text x="212" y="128" font-size="19" font-weight="bold" fill="#1a1a1a">w<tspan dy="5" font-size="13">1</tspan></text>
+  <text x="212" y="192" font-size="19" font-weight="bold" fill="#1a1a1a">w<tspan dy="5" font-size="13">2</tspan></text>
+  <text x="220" y="277" font-size="19" font-weight="bold" fill="#1a1a1a">w<tspan dy="5" font-size="13">n</tspan></text>
 
   <!-- Bias -->
   <text x="390" y="48" font-size="20" fill="#444444" text-anchor="middle">Bias</text>
