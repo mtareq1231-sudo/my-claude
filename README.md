@@ -81,9 +81,25 @@ Find every file that needs OCR:
 node -e "const r=require('./out/report.json');r.results.filter(x=>x.pagesNeedingOcr?.length).forEach(x=>console.log(x.file,x.pagesNeedingOcr))"
 ```
 
+## Using it from Claude Code
+
+This repo ships a skill, so in any session on this repo you can type:
+
+```
+/pdf-inspect
+```
+
+and Claude will install deps if needed, run the batch, and report which files
+came through cleanly and which are scans needing OCR. The skill lives in
+`.claude/skills/pdf-inspect/SKILL.md`.
+
+Note this is a *project* skill: it only exists in sessions working on this
+repository, and only on branches where the file is present.
+
 ## Layout
 
 ```
+.claude/skills/  pdf-inspect skill — makes /pdf-inspect available in Claude Code
 pdfs/            drop PDFs here (contents git-ignored — data, not code)
 samples/         tiny text-based PDF for verifying the setup
 scripts/         inspect.mjs — the batch CLI
