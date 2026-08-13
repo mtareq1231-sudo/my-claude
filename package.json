@@ -1,0 +1,14 @@
+{
+  "name": "my-claude-pdf-inspector",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Batch PDF classification and Markdown extraction using @firecrawl/pdf-inspector",
+  "scripts": {
+    "inspect": "node scripts/inspect.mjs",
+    "classify": "node scripts/inspect.mjs --classify-only"
+  },
+  "dependencies": {
+    "@firecrawl/pdf-inspector": "^1.14.1"
+  }
+}

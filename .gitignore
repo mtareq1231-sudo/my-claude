@@ -1,0 +1,8 @@
+node_modules/
+
+# Generated output (markdown + report.json)
+out/
+
+# Source PDFs are data, not code — keep them out of git.
+pdfs/*
+!pdfs/.gitkeep
