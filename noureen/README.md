@@ -1,10 +1,37 @@
-# Noureen (نورين) — presentation redesign workspace
+# Noureen (نورين) — board presentation redesign
 
-`source/` holds everything recovered from `Noreen_Board_Presentation_AR.pdf`, the 45-slide board deck:
+## `deck/index.html` — the presentation
+A single self-contained HTML file (42 slides, A4 landscape 842 × 595) built on the
+**إذاعة نورين** design system: its colour tokens, header/footer geometry, section colours,
+supergraphic rules and the real vector logo.
 
-- `source/brand/tokens.json` — the colour palette taken from the PDF's vector fills and text colours
-- `source/brand/logo-lockup-on-dark.svg|png` — the mark and wordmark, cut from the closing slide. The mark is clean vector. The wordmark in the PDF is a stair-stepped trace, so swap in the original logo files when you have them.
-- `source/slides/slide-NN.png` — a 144 dpi render of every slide, to use as a reference
-- `source/content.md` — all slide text, one section per slide
+Open it in a browser:
 
-The UI typeface was flattened to Type3 glyphs when the PDF was exported, so the original font family can't be recovered from this file. The basmala uses Amiri Quran.
+| Key | Action |
+| --- | --- |
+| ← / Space / Enter | next slide (RTL) |
+| → / Backspace | previous slide |
+| G | overview of all slides (click one to jump) |
+| E | edit mode: click any text and type |
+| Save button | download a copy of the HTML that includes your edits |
+| P | export to PDF (one slide per A4-landscape page) |
+| F | full screen |
+
+Content slides get their header and footer from two attributes, so changing a section
+name or icon is a one-word edit: `data-section="المحتوى البرامجي" data-icon="i-mic"`.
+The icons are the `<symbol id="i-…">` entries at the end of the file.
+
+Budget amounts are left as dashed `—` fields because the source deck has no figures.
+Fill them in with edit mode.
+
+## `assets/logo/` — vector logo
+Horizontal, stacked, symbol and wordmark versions, each in primary, reversed, teal and white.
+
+## `source/`
+- `content.md` — all the text from the original PDF
+- `slides/` — renders of the original 45 slides, for reference
+- `brand/tokens.json` — the palette sampled from the PDF
+
+## Fonts
+Thmanyah Sans is licensed for embedding but can't be hosted, so the deck uses it when it
+is installed and falls back to Tajawal otherwise. The basmala uses Amiri Quran.
