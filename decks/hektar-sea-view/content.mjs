@@ -13,7 +13,7 @@ export default {
     subtitle: 'مشروع سكني استثماري – حي الخور',
     lead: 'المسطحات، الوحدات، الإيرادات، التكاليف، وهيكل الشراكة والعوائد الاستثمارية',
     meta: ['62 وحدة', '51 موقفًا', '18–24 شهرًا'],
-    image: null, // set to a project render path (e.g. '../assets/hektar-render.jpg') when available
+    image: 'cover.webp', // relative to this deck folder
   },
   slides: [
     {
