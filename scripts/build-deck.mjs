@@ -84,22 +84,25 @@ function block(b) {
   }
 }
 
-// Brand shown on the cover and in every footer: an image logo if given, else a text wordmark.
-const brand = deck.brand ?? { ar: 'هكتار', en: 'HEKTAR' };
-const wordmark = (cls) =>
-  brand.logo
-    ? `<img class="${cls} logo-img" src="${esc(brand.logo)}" alt="${esc(brand.ar)}">`
-    : `<div class="${cls} wordmark"><span class="wm-ar">${esc(brand.ar)}</span>${brand.en ? `<span class="wm-en" dir="ltr">${esc(brand.en)}</span>` : ''}</div>`;
-const logoMark = wordmark('mark');
+// Brand: the flower mark plus the brand name, laid out like the original OSOOL lockup
+// (mark on the left, Arabic name above the Latin name). The footer shows the mark alone.
+const brand = { mark: '../assets/brand-mark.png', ...deck.brand };
+const markImg = (cls) => `<img class="${cls}" src="${esc(brand.mark)}" alt="">`;
+const lockup = (cls) =>
+  `<div class="${cls} lockup" dir="ltr">${markImg('lk-mark')}<div class="lk-text">` +
+  `<span class="lk-ar" dir="rtl">${esc(brand.ar)}</span>` +
+  (brand.en ? `<span class="lk-en">${esc(brand.en)}</span>` : '') +
+  `</div></div>`;
+const logoMark = markImg('mark');
 
 function cover(c) {
   const media = c.image
     ? `<img class="cover-img" src="${esc(c.image)}" alt="">`
-    : `<div class="cover-ph">${wordmark('ph-mark')}</div>`;
+    : `<div class="cover-ph">${markImg('ph-mark')}</div>`;
   return `
   <section class="page cover">
     <div class="cover-text">
-      ${wordmark('cover-logo')}
+      ${lockup('cover-logo')}
       <div class="rule"></div>
       <div class="eyebrow">${fmt(c.eyebrow)}</div>
       <h1 class="name" dir="ltr">${esc(c.name)}</h1>
