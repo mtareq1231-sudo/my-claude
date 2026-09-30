@@ -114,3 +114,18 @@ Markdown (`extractPagesMarkdown`), region-scoped text and table extraction for
 hybrid OCR pipelines (`extractTextInRegions`, `extractTablesInRegions`), and
 tagged-PDF structure elements (`extractStructureElements`). See
 `node_modules/@firecrawl/pdf-inspector/index.d.ts` for the full typed API.
+
+## Arabic financial-study decks
+
+`decks/<name>/content.mjs` holds a deck's text and tables; `scripts/build-deck.mjs`
+renders it as a 1280×720 RTL PDF in the OSOOL style (IBM Plex Sans Arabic + Noto Serif
+figures, fonts bundled in `decks/assets/`).
+
+```bash
+npm run deck -- decks/hektar-sea-view         # → decks/hektar-sea-view/hektar-sea-view.pdf
+npm run deck -- decks/hektar-sea-view --png   # also writes preview/pNN.png per page
+```
+
+Tables are laid out right-to-left (label column on the right), and every number run is
+isolated as LTR so ranges like `18–24`, negatives like `(6,835,257)` and `1.68×` keep
+their order. The build warns if any page's content overflows.

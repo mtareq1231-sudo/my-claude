@@ -6,9 +6,13 @@
   "description": "Batch PDF classification and Markdown extraction using @firecrawl/pdf-inspector",
   "scripts": {
     "inspect": "node scripts/inspect.mjs",
-    "classify": "node scripts/inspect.mjs --classify-only"
+    "classify": "node scripts/inspect.mjs --classify-only",
+    "deck": "node scripts/build-deck.mjs"
   },
   "dependencies": {
     "@firecrawl/pdf-inspector": "^1.14.1"
+  },
+  "devDependencies": {
+    "playwright": "^1.56.1"
   }
 }

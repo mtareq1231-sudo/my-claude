@@ -6,3 +6,7 @@ out/
 # Source PDFs are data, not code — keep them out of git.
 pdfs/*
 !pdfs/.gitkeep
+
+# Deck build output (PDF is committed; HTML + PNG previews are regenerated)
+decks/*/deck.html
+decks/*/preview/
