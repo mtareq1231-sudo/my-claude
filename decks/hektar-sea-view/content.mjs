@@ -7,6 +7,7 @@ const sub = (...cells) => ({ cells, sub: true });
 
 export default {
   title: 'Hektar Sea View — عرض الدراسة المالية',
+  brand: { ar: 'هكتار', en: 'HEKTAR' }, // add logo: 'path/to/logo.png' to use an image instead
   cover: {
     eyebrow: 'عرض الدراسة المالية',
     name: 'Hektar Sea View',

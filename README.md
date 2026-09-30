@@ -118,7 +118,7 @@ tagged-PDF structure elements (`extractStructureElements`). See
 ## Arabic financial-study decks
 
 `decks/<name>/content.mjs` holds a deck's text and tables; `scripts/build-deck.mjs`
-renders it as a 1280×720 RTL PDF in the OSOOL style (IBM Plex Sans Arabic + Noto Serif
+renders it as a 1280×720 RTL PDF in the Hektar style (IBM Plex Sans Arabic + Noto Serif
 figures, fonts bundled in `decks/assets/`).
 
 ```bash

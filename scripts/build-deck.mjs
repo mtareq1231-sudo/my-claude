@@ -84,16 +84,22 @@ function block(b) {
   }
 }
 
-const logoMark = `<div class="mark"><img src="../assets/osool-logo.png" alt=""></div>`;
+// Brand shown on the cover and in every footer: an image logo if given, else a text wordmark.
+const brand = deck.brand ?? { ar: 'هكتار', en: 'HEKTAR' };
+const wordmark = (cls) =>
+  brand.logo
+    ? `<img class="${cls} logo-img" src="${esc(brand.logo)}" alt="${esc(brand.ar)}">`
+    : `<div class="${cls} wordmark"><span class="wm-ar">${esc(brand.ar)}</span>${brand.en ? `<span class="wm-en" dir="ltr">${esc(brand.en)}</span>` : ''}</div>`;
+const logoMark = wordmark('mark');
 
 function cover(c) {
   const media = c.image
     ? `<img class="cover-img" src="${esc(c.image)}" alt="">`
-    : `<div class="cover-ph"><img src="../assets/osool-logo.png" alt=""></div>`;
+    : `<div class="cover-ph">${wordmark('ph-mark')}</div>`;
   return `
   <section class="page cover">
     <div class="cover-text">
-      <img class="cover-logo" src="../assets/osool-logo.png" alt="أصول">
+      ${wordmark('cover-logo')}
       <div class="rule"></div>
       <div class="eyebrow">${fmt(c.eyebrow)}</div>
       <h1 class="name" dir="ltr">${esc(c.name)}</h1>
