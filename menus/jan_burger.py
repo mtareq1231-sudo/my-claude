@@ -194,7 +194,7 @@ def draw_logo(c, cx, cy, width):
     return data["h"] * s
 
 
-def product_photo(fname):
+def product_photo(fname, pad_frac=0.08):
     """Crop to the products (auto-detected) and feather edges into the page colour."""
     im = Image.open(os.path.join(ASSETS, fname)).convert("RGB")
     a = np.asarray(im, dtype=float)
@@ -202,8 +202,7 @@ def product_photo(fname):
     # Shift the photo so its backdrop matches the page cream exactly.
     a = np.clip(a + (np.array([253, 244, 229]) - np.median(a[:20, :20].reshape(-1, 3), axis=0)), 0, 255)
     im = Image.fromarray(a.astype(np.uint8))
-    # Pad by product height so every photo gets the same margin ratio vertically.
-    pad = int(0.06 * (ys.max() - ys.min()))
+    pad = int(pad_frac * (xs.max() - xs.min()))
     im = im.crop((max(xs.min() - pad, 0), max(ys.min() - pad, 0),
                   min(xs.max() + pad, im.width), min(ys.max() + pad, im.height)))
     im = im.resize((im.width * 2, im.height * 2), Image.LANCZOS)
@@ -212,51 +211,31 @@ def product_photo(fname):
     m.paste(255, (f, f, im.width - f, im.height - f))
     m = m.filter(ImageFilter.GaussianBlur(f / 2))
     bg = Image.new("RGB", im.size, (253, 244, 229))
-    frac = (ys.max() - ys.min()) / (im.height / 2)   # product height / image height
-    return ImageReader(Image.composite(im, bg, m)), im.width / im.height, frac
+    return ImageReader(Image.composite(im, bg, m)), im.width / im.height
 
 
-PRODUCT_H = 175  # mm: every meal's food is drawn at this height so all meals look the same size
-
-
-def price_pill(c, price, cx, y_top):
-    pw = (pdfmetrics.stringWidth(price, "Oswald-Bold", 150)
-          + pdfmetrics.stringWidth(" " + CURRENCY, "Oswald-Medium", 54) + 50 * mm)
-    c.setFillColor(ORANGE)
-    c.roundRect(cx - pw / 2, Y(y_top + 62), pw, 62 * mm, 31 * mm, stroke=0, fill=1)
-    runs(c, [(price, "Oswald-Bold", 150, CREAM_LT), (" " + CURRENCY, "Oswald-Medium", 54, CREAM_LT)],
-         cx, Y(y_top + 50))
-
-
-def kcal_line(c, kcal, cx, y, size=40):
-    runs(c, [(kcal + " kcal", "Montserrat-Bold", size, INK), ("   |   ", "Montserrat-Medium", size, RULE),
-             (Arabic("سعرة حرارية", "Cairo-Medium", size + 2), INK)], cx, Y(y))
+WIDE_PHOTOS = {"jan-original-beef.jpg"}
 
 
 def meal_card(c, meal, top, height, photo_left):
     en, ar_name, price, kcal, photo = meal
-    img, ratio, frac = product_photo(photo)
-    h = PRODUCT_H / frac * mm
-    w = h * ratio
-    margin, gap = 30, 10
-
-    if w > 360 * mm:
-        # Wide shot: photo across the card, name + price in a row underneath.
-        c.drawImage(img, X(300) - w / 2, Y(top + 4) - h, w, h)
-        y0 = top + 4 + h / mm
-        tcx = X(margin + 165)
-        c.setFillColor(MAROON)
-        spaced(c, en.upper(), "Oswald-Bold", 66, tcx, Y(y0 + 18))
-        runs(c, [(Arabic(ar_name, "Cairo-Bold", 48).fit(330 * mm), INK)], tcx, Y(y0 + 40))
-        kcal_line(c, kcal, tcx, y0 + 60, 34)
-        price_pill(c, price, X(600 - margin - 85), y0 + 4)
-        return
-
-    photo_w = 330
+    photo_w, gap, margin = 330, 10, 30
+    wide = photo in WIDE_PHOTOS
+    if wide:
+        # Wide shot: give the photo more room (into the side margin) so the
+        # food appears about as big as in the other meals.
+        photo_w, gap = 395, 0
     text_w = 600 - 2 * margin - photo_w - gap
-    px = margin if photo_left else 600 - margin - photo_w
-    tx = (margin + photo_w + gap) if photo_left else margin
+    side = 2 if wide else margin   # margin on the photo side
+    text_w = 600 - margin - side - photo_w - gap
+    px = side if photo_left else 600 - side - photo_w
+    tx = (side + photo_w + gap) if photo_left else margin
     tcx = X(tx + text_w / 2)
+
+    img, ratio = product_photo(photo, 0.02 if wide else 0.08)
+    w = photo_w * mm
+    h = min(w / ratio, (height - 20) * mm)
+    w = h * ratio
     c.drawImage(img, X(px + photo_w / 2) - w / 2, Y(top + height / 2) - h / 2, w, h)
 
     # Text block, vertically centred in the card
@@ -270,9 +249,18 @@ def meal_card(c, meal, top, height, photo_left):
         y += lh
     runs(c, [(Arabic(ar_name, "Cairo-Bold", 56).fit(text_w * mm), INK)], tcx, Y(y + 2))
     y += 30
-    price_pill(c, price, tcx, y)
+
+    # Price pill
+    pw = (pdfmetrics.stringWidth(price, "Oswald-Bold", 150)
+          + pdfmetrics.stringWidth(" " + CURRENCY, "Oswald-Medium", 54) + 50 * mm)
+    c.setFillColor(ORANGE)
+    c.roundRect(tcx - pw / 2, Y(y + 62), pw, 62 * mm, 31 * mm, stroke=0, fill=1)
+    runs(c, [(price, "Oswald-Bold", 150, CREAM_LT), (" " + CURRENCY, "Oswald-Medium", 54, CREAM_LT)],
+         tcx, Y(y + 50))
     y += 75 + 18
-    kcal_line(c, kcal, tcx, y)
+
+    runs(c, [(kcal + " kcal", "Montserrat-Bold", 40, INK), ("   |   ", "Montserrat-Medium", 40, RULE),
+             (Arabic("سعرة حرارية", "Cairo-Medium", 42), INK)], tcx, Y(y))
 
 
 def person(c, cx, base, h, kind):
