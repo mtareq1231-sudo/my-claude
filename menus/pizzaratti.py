@@ -1,8 +1,9 @@
 """Pizzaratti standing menu panel — print file.
 
 Same panel system as jan_burger.py (600 x 2000 mm trim, 5 mm bleed, vector
-text and logo, side-by-side meal cards). White page, Pizzaratti red header
+text and logo, side-by-side meal cards). White page, Pizzaratti green header
 with the logo reversed out, checkered-tablecloth bands, cut-out pizzas.
+The logo is drawn straight from the brand's vector PDF.
 Edit PIZZAS below and re-run:  python3 menus/pizzaratti.py
 """
 import io
@@ -16,7 +17,7 @@ from reportlab.pdfgen import canvas
 from scipy import ndimage as ndi
 
 import jan_burger as base
-from jan_burger import Arabic, H, W, X, Y, calorie_notice, draw_logo, meal_card, rgb, runs
+from jan_burger import Arabic, H, W, X, Y, calorie_notice, meal_card, rgb, runs
 
 HERE = base.HERE
 OUT = os.path.join(HERE, "out", "pizzaratti-menu-600x2000mm.pdf")
@@ -28,17 +29,17 @@ PIZZAS = [
     ("Super Mix Pizza", "سوبر ميكس", "46", "1,480", "pizzaratti-super-mix.jpg"),
 ]
 
-# Pizzaratti palette (red sampled from the supplied logo)
+# Pizzaratti green identity (from the brand's vector logo, #2E5637)
 WHITE = rgb("#FFFFFF")
-RED = rgb("#EC3701")
-RED_DK = rgb("#B92B00")
-INK = rgb("#2B1A12")
-RULE = rgb("#F3CDBE")
+GREEN = rgb("#2E5637")
+GREEN_DK = rgb("#1F3D26")
+INK = rgb("#1E2B21")
+RULE = rgb("#CFDDD2")
+LOGO_PDF = os.path.join(base.ASSETS, "pizzaratti-logo-green.pdf")
 PAGE_RGB = (255, 255, 255)
 
 # The shared card and notice helpers read these module globals.
-base.LOGO = os.path.join(base.ASSETS, "pizzaratti-logo.json")
-base.CREAM_LT, base.MAROON, base.ORANGE, base.INK, base.RULE = WHITE, RED, RED, INK, RULE
+base.CREAM_LT, base.MAROON, base.ORANGE, base.INK, base.RULE = WHITE, GREEN, GREEN, INK, RULE
 
 
 def pizza_photo(fname, pad_frac=0.04):
@@ -77,7 +78,7 @@ def checker(c, y_top, rows=2, size=18):
     """Red / white tablecloth check across the full bleed width."""
     c.setFillColor(WHITE)
     c.rect(0, Y(y_top + rows * size), W, rows * size * mm, stroke=0, fill=1)
-    c.setFillColor(RED)
+    c.setFillColor(GREEN)
     for r in range(rows):
         for k in range(-1, int(610 / size) + 2):
             if (k + r) % 2 == 0:
@@ -116,16 +117,16 @@ def build():
 
     # Header: tablecloth check, red block with a scalloped crust edge, white logo
     checker(c, -5, rows=2)
-    scallop_block(c, 31, 300, RED)
-    c.setFillColor(RED_DK)
+    scallop_block(c, 31, 300, GREEN)
+    c.setFillColor(GREEN_DK)
     c.rect(0, Y(37), W, 6 * mm, stroke=0, fill=1)
-    draw_white_logo(c, cx, Y(170), 380 * mm)
+    draw_pdf_logo(c, LOGO_PDF, cx, Y(170), 380 * mm, WHITE)
 
     # Section title: PIZZA | بيتزا
     y_t = 420
-    runs(c, [("PIZZA", "Oswald-Bold", 140, RED), ("   ", "Oswald-Bold", 140, RED),
-             (Arabic("بيتزا", "Cairo-Bold", 120), RED)], cx, Y(y_t))
-    c.setStrokeColor(RED)
+    runs(c, [("PIZZA", "Oswald-Bold", 140, GREEN), ("   ", "Oswald-Bold", 140, GREEN),
+             (Arabic("بيتزا", "Cairo-Bold", 120), GREEN)], cx, Y(y_t))
+    c.setStrokeColor(GREEN)
     c.setLineWidth(2.2 * mm)
     c.setLineCap(1)
     c.line(X(40), Y(y_t - 18), X(140), Y(y_t - 18))
@@ -146,7 +147,7 @@ def build():
     calorie_notice(c, 1775, 1856)
 
     # Footer: red block with scalloped top edge, VAT note, tablecloth check
-    scallop_block(c, 1880, 1975, RED, down=False, depth=14)
+    scallop_block(c, 1880, 1975, GREEN, down=False, depth=14)
     runs(c, [("PRICES INCLUDE VAT", "Oswald-Medium", 60, WHITE), ("   |   ", "Oswald-Medium", 60, WHITE),
              (Arabic("الأسعار شاملة ضريبة القيمة المضافة", "Cairo-Bold", 54).fit(300 * mm), WHITE)],
          cx, Y(1937))
@@ -165,20 +166,36 @@ def build():
     print("wrote", OUT)
 
 
-def draw_white_logo(c, cx, cy, width):
-    """The supplied logo is red-on-white; reverse it to white on the red header."""
-    import json
-    data = json.load(open(base.LOGO))
-    for layer in data["layers"]:
-        layer["color"] = "#FFFFFF"
-    tmp = base.LOGO + ".white.tmp"
-    json.dump(data, open(tmp, "w"))
-    keep, base.LOGO = base.LOGO, tmp
-    try:
-        draw_logo(c, cx, cy, width)
-    finally:
-        base.LOGO = keep
-        os.remove(tmp)
+def draw_pdf_logo(c, path, cx, cy, width, color):
+    """Redraw the vector shapes of a one-page logo PDF, centred at cx, cy, in one colour."""
+    import pymupdf
+    drawings = pymupdf.open(path)[0].get_drawings()
+    box = pymupdf.Rect()
+    for d in drawings:
+        box |= d["rect"]
+    k = width / box.width
+
+    def pt(q):  # PDF page space (y down) -> canvas
+        return cx + (q.x - box.x0 - box.width / 2) * k, cy - (q.y - box.y0 - box.height / 2) * k
+
+    c.setFillColor(color)
+    for d in drawings:
+        p, cur = c.beginPath(), None
+        for it in d["items"]:
+            start = pt(it[1])
+            if cur is None or abs(start[0] - cur[0]) > 1e-3 or abs(start[1] - cur[1]) > 1e-3:
+                if cur is not None:
+                    p.close()
+                p.moveTo(*start)
+            if it[0] == "l":
+                cur = pt(it[2])
+                p.lineTo(*cur)
+            elif it[0] == "c":
+                cur = pt(it[4])
+                p.curveTo(*pt(it[2]), *pt(it[3]), *cur)
+        p.close()
+        c.drawPath(p, stroke=0, fill=1, fillMode=0 if d.get("even_odd") else 1)
+    return box.height * k
 
 
 if __name__ == "__main__":
