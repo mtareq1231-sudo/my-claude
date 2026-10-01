@@ -253,6 +253,62 @@ def meal_card(c, meal, top, height, photo_left):
              (Arabic("سعرة حرارية", "Cairo-Medium", 42), INK)], tcx, Y(y))
 
 
+def person(c, cx, base, h, kind):
+    """Simple pictogram: man / woman / child, standing on `base` (pt), height h (pt)."""
+    c.setFillColor(MAROON)
+    r = h * 0.11
+    c.circle(cx, base + h - r, r, stroke=0, fill=1)
+    body_top = base + h - 2 * r - h * 0.04
+    if kind == "woman":
+        p = c.beginPath()
+        p.moveTo(cx - h * 0.09, body_top)
+        p.lineTo(cx + h * 0.09, body_top)
+        p.lineTo(cx + h * 0.19, base + h * 0.30)
+        p.lineTo(cx - h * 0.19, base + h * 0.30)
+        p.close()
+        c.drawPath(p, stroke=0, fill=1)
+        for dx in (-0.06, 0.06):
+            c.roundRect(cx + dx * h - h * 0.035, base, h * 0.07, h * 0.32, h * 0.03, stroke=0, fill=1)
+    else:
+        bw = h * 0.26
+        c.roundRect(cx - bw / 2, base + h * 0.40, bw, body_top - base - h * 0.40, h * 0.06, stroke=0, fill=1)
+        for dx in (-0.065, 0.065):
+            c.roundRect(cx + dx * h - h * 0.055, base, h * 0.11, h * 0.46, h * 0.04, stroke=0, fill=1)
+
+
+def calorie_notice(c, top, bottom):
+    """Daily calorie needs: man 2500, woman 2000, child 1800 (SFDA menu guidance)."""
+    c.setFillColor(CREAM_LT)
+    c.setStrokeColor(RULE)
+    c.setLineWidth(1.4 * mm)
+    c.roundRect(X(25), Y(bottom), 550 * mm, (bottom - top) * mm, 18 * mm, stroke=1, fill=1)
+    runs(c, [("DAILY CALORIE NEEDS", "Oswald-Bold", 52, MAROON), ("   |   ", "Oswald-Medium", 52, ORANGE),
+             (Arabic("الاحتياج اليومي من السعرات الحرارية", "Cairo-Bold", 46), MAROON)],
+         X(300), Y(top + 30))
+    groups = [("man", "MAN", "الرجل", "2,500", 1.0),
+              ("woman", "WOMAN", "المرأة", "2,000", 1.0),
+              ("child", "CHILD", "الطفل", "1,800", 0.78)]
+    col_w = 550 / 3
+    for i, (kind, en, ar_t, kcal, scale) in enumerate(groups):
+        x0 = 25 + i * col_w
+        if i:
+            c.setStrokeColor(RULE)
+            c.setLineWidth(1 * mm)
+            c.line(X(x0), Y(top + 52), X(x0), Y(bottom - 14))
+        person(c, X(x0 + 32), Y(bottom - 22), 92 * mm * scale, kind)
+        tx = x0 + 68
+        runs(c, [(en, "Oswald-Bold", 44, INK)], X(tx) + pdfmetrics.stringWidth(en, "Oswald-Bold", 44) / 2, Y(top + 74))
+        a = Arabic(ar_t, "Cairo-Bold", 44)
+        a.draw(c, X(x0 + col_w - 12) - a.width, Y(top + 74), INK)
+        c.setFillColor(ORANGE)
+        c.setFont("Oswald-Bold", 104)
+        c.drawString(X(tx), Y(top + 118), kcal)
+        c.setFillColor(INK)
+        c.setFont("Montserrat-Bold", 30)
+        c.drawString(X(tx), Y(top + 134), "kcal / day")
+        Arabic("سعرة حرارية في اليوم", "Cairo-Medium", 34).draw(c, X(tx), Y(top + 150), INK)
+
+
 def build():
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     c = canvas.Canvas(OUT, pagesize=(W, H))
@@ -289,7 +345,7 @@ def build():
     c.line(X(480), Y(y_t - 18), X(560), Y(y_t - 18))
 
     # Meal cards, photos alternating sides
-    top, bottom = 580, 1850
+    top, bottom = 570, 1665
     ch = (bottom - top) / len(MEALS)
     for i, meal in enumerate(MEALS):
         t = top + i * ch
@@ -301,14 +357,18 @@ def build():
             c.setDash()
         meal_card(c, meal, t, ch, photo_left=(i % 2 == 0))
 
-    # Footer: stripes + note
+    # Daily calorie needs notice (SFDA guidance)
+    calorie_notice(c, 1672, 1862)
+
+    # Footer: stripes + VAT note
     c.setFillColor(MAROON)
     c.rect(0, 0, W, Y(1872), stroke=0, fill=1)
     stripes(c, 1945, 60, MAROON_DK)
     c.setFillColor(ORANGE)
     c.rect(0, Y(1880), W, 8 * mm, stroke=0, fill=1)
-    runs(c, [("PRICES IN SAR", "Oswald-Medium", 64, CREAM_LT), ("    |    ", "Oswald-Medium", 64, ORANGE),
-             (Arabic("الأسعار بالريال السعودي", "Cairo-Bold", 58), CREAM_LT)], cx, Y(1925))
+    runs(c, [("PRICES INCLUDE VAT", "Oswald-Medium", 60, CREAM_LT), ("   |   ", "Oswald-Medium", 60, ORANGE),
+             (Arabic("الأسعار شاملة ضريبة القيمة المضافة", "Cairo-Bold", 54).fit(300 * mm), CREAM_LT)],
+         cx, Y(1925))
 
     c.showPage()
     c.save()
