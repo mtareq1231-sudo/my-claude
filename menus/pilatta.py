@@ -2,8 +2,8 @@
 
 Same panel system as jan_burger.py (600 x 2000 mm trim, 5 mm bleed, vector
 text, side-by-side cards). Styled on the Pilatta packaging: periwinkle page,
-deep-green type, yellow pasta doodles (fusilli, farfalle, dots), photos kept
-on their own periwinkle backdrop as rounded tiles.
+deep-green type, yellow pasta doodles (fusilli, farfalle, dots), bowls floating
+on the page (photo backdrop matched to it, doodles painted out).
 Edit PASTAS below and re-run:  python3 menus/pilatta.py
 """
 import io
@@ -11,7 +11,7 @@ import math
 import os
 
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageFilter
 from reportlab.lib.units import mm
 from reportlab.lib.utils import ImageReader
 from reportlab.pdfbase import pdfmetrics
@@ -34,14 +34,14 @@ PASTAS = [
 ]
 
 # Pilatta palette (sampled from the packaging photos)
-PAGE = rgb("#E4E9FC")
+PAGE = rgb("#DCE3FC")
 LAVENDER = rgb("#B8C3F3")
 GREEN = rgb("#2F5747")
 YELLOW = rgb("#FED604")
 WHITE = rgb("#FFFFFF")
 RULE = rgb("#B8C3F3")
 
-for name in ["Fredoka-SemiBold", "Fredoka-Bold", "Marcellus-Regular"]:
+for name in ["Fredoka-SemiBold", "Fredoka-Bold"]:
     pdfmetrics.registerFont(TTFont(name, os.path.join(HERE, "fonts", name + ".ttf")))
 HEAD = "Fredoka-Bold"
 
@@ -124,45 +124,51 @@ def wave_band(c, y_top, y_bottom, color, down=True, amp=9, waves=4):
 
 # --- photos and cards ---------------------------------------------------------
 
-def bowl_tile(fname, size_px=1400):
-    """Square crop centred on the bowl, kept on its own periwinkle backdrop."""
+PAGE_RGB = (220, 227, 252)
+
+
+def bowl_photo(fname):
+    """Bowl + bread on a backdrop matched to the page, doodles and captions removed, soft edges."""
     im = Image.open(os.path.join(base.ASSETS, fname)).convert("RGB")
     a = np.asarray(im, dtype=float)
-    bg = np.median(a[:30, :30].reshape(-1, 3), axis=0)
-    m = ndi.binary_opening(np.linalg.norm(a - bg, axis=2) > 45, iterations=4)
+    blur = np.asarray(im.filter(ImageFilter.GaussianBlur(2)), dtype=float)
+    border = np.concatenate([blur[:15].reshape(-1, 3), blur[-15:].reshape(-1, 3),
+                             blur[:, :15].reshape(-1, 3), blur[:, -15:].reshape(-1, 3)])
+    bg = np.median(border, axis=0)
+    m = ndi.binary_opening(np.linalg.norm(blur - bg, axis=2) > 22, iterations=3)
     lab, n = ndi.label(m)
-    big = lab == (np.argmax(ndi.sum(m, lab, range(1, n + 1))) + 1)
-    ys, xs = np.where(big)
-    cx, cy = (xs.min() + xs.max()) / 2, (ys.min() + ys.max()) / 2
-    half = min(max(xs.max() - xs.min(), ys.max() - ys.min()) * 0.62, im.width / 2, im.height / 2)
-    cx = min(max(cx, half), im.width - half)
-    cy = min(max(cy, half), im.height - half)
-    tile = im.crop((int(cx - half), int(cy - half), int(cx + half), int(cy + half)))
-    tile = tile.resize((size_px, size_px), Image.LANCZOS)
+    main = lab == (np.argmax(ndi.sum(m, lab, range(1, n + 1))) + 1)   # bowl + bread (+ shadow)
+    keep = Image.fromarray((ndi.binary_dilation(main, iterations=30) * 255).astype(np.uint8))
+    keep = np.asarray(keep.filter(ImageFilter.GaussianBlur(14)), dtype=float)[..., None] / 255
+    a = a * keep + bg * (1 - keep)                       # paint over doodles / captions
+    a = np.clip(a + (np.array(PAGE_RGB) - bg), 0, 255)   # backdrop -> page colour
+    ys, xs = np.where(main)
+    pad = int(0.10 * (xs.max() - xs.min()))
+    box = (max(xs.min() - pad, 0), max(ys.min() - pad, 0), min(xs.max() + pad, im.width), min(ys.max() + pad, im.height))
+    out = Image.fromarray(a.astype(np.uint8)).crop(box)
+    f = int(min(out.size) * 0.06)                        # feather the crop edge into the page
+    mask = Image.new("L", out.size, 0)
+    mask.paste(255, (f, f, out.width - f, out.height - f))
+    out = Image.composite(out, Image.new("RGB", out.size, PAGE_RGB), mask.filter(ImageFilter.GaussianBlur(f / 2)))
     buf = io.BytesIO()
-    tile.save(buf, "JPEG", quality=92, subsampling=0)
+    out.save(buf, "JPEG", quality=92, subsampling=0)
     buf.seek(0)
-    return ImageReader(buf)
+    return ImageReader(buf), out.width / out.height
 
 
 def pasta_card(c, item, top, height, photo_left):
     en, ar_name, price, kcal, photo = item
-    tile, margin, gap = 275, 34, 26
-    text_w = 600 - 2 * margin - tile - gap
-    px = margin if photo_left else 600 - margin - tile
-    tx = (margin + tile + gap) if photo_left else margin
+    photo_w, margin, gap = 330, 22, 6
+    text_w = 600 - 2 * margin - photo_w - gap
+    px = margin if photo_left else 600 - margin - photo_w
+    tx = (margin + photo_w + gap) if photo_left else margin
     tcx = X(tx + text_w / 2)
 
-    # Rounded photo tile with a white rim
-    ty = top + (height - tile) / 2
-    c.setFillColor(WHITE)
-    c.roundRect(X(px - 5), Y(ty + tile + 5), (tile + 10) * mm, (tile + 10) * mm, 34 * mm, stroke=0, fill=1)
-    c.saveState()
-    clip = c.beginPath()
-    clip.roundRect(X(px), Y(ty + tile), tile * mm, tile * mm, 30 * mm)
-    c.clipPath(clip, stroke=0, fill=0)
-    c.drawImage(bowl_tile(photo), X(px), Y(ty + tile), tile * mm, tile * mm)
-    c.restoreState()
+    img, ratio = bowl_photo(photo)
+    w = photo_w * mm
+    h = min(w / ratio, (height - 10) * mm)
+    w = h * ratio
+    c.drawImage(img, X(px + photo_w / 2) - w / 2, Y(top + height / 2) - h / 2, w, h)
 
     lines = wrap(en, HEAD, 78, text_w * mm)
     lh = 30
@@ -185,10 +191,28 @@ def pasta_card(c, item, top, height, photo_left):
                  (Arabic("سعرة حرارية", "Cairo-Medium", 42), GREEN)], tcx, Y(y))
 
 
-def wordmark(c, cx, y_base, size):
-    """Pilatta wordmark (typeset stand-in until the logo file is supplied)."""
-    runs(c, [("Pil", "Marcellus-Regular", size * 0.92, GREEN), ("ATTA", "Marcellus-Regular", size, GREEN)],
-         cx, y_base)
+def draw_svg_logo(c, path, cx, cy, width, color=None):
+    """Draw a logo SVG made by logo_to_svg.py (absolute M/L/C/Z paths) centred at cx, cy."""
+    import re
+    svg = open(path).read()
+    x0, y0, vw, vh = map(float, re.search(r'viewBox="([^"]+)"', svg).group(1).split())
+    k = width / vw
+    for fill, d in re.findall(r'fill="([^"]+)" fill-rule="evenodd" d="([^"]+)"', svg):
+        p = c.beginPath()
+        for cmd, nums in re.findall(r"([MLCZ])([^MLCZ]*)", d):
+            v = [float(n) for n in nums.split()]
+            pts = [(cx + (v[i] - x0 - vw / 2) * k, cy - (v[i + 1] - y0 - vh / 2) * k) for i in range(0, len(v), 2)]
+            if cmd == "M":
+                p.moveTo(*pts[0])
+            elif cmd == "L":
+                p.lineTo(*pts[0])
+            elif cmd == "C":
+                p.curveTo(*pts[0], *pts[1], *pts[2])
+            else:
+                p.close()
+        c.setFillColor(color or rgb(fill))
+        c.drawPath(p, stroke=0, fill=1, fillMode=0)
+    return vh * k
 
 
 def build():
@@ -203,13 +227,13 @@ def build():
 
     # Header: lavender band with a wavy edge, wordmark, doodles
     wave_band(c, -5, 300, LAVENDER)
-    wordmark(c, cx, Y(205), 330)
-    fusilli(c, 70, 70, 110, -20)
-    fusilli(c, 540, 120, 100, 65)
-    farfalle(c, 85, 255, 46, 18)
-    dot(c, 470, 60, 9)
-    dot(c, 520, 250, 6)
-    dot(c, 160, 150, 5)
+    draw_svg_logo(c, os.path.join(base.ASSETS, "pilatta-logo.svg"), cx, Y(165), 470 * mm, GREEN)
+    fusilli(c, 110, 52, 110, -10)
+    fusilli(c, 495, 262, 100, 6)
+    farfalle(c, 80, 262, 40, 18)
+    dot(c, 480, 45, 9)
+    dot(c, 545, 55, 5)
+    dot(c, 300, 272, 5)
 
     # Section title: PASTA | باستا
     y_t = 410
