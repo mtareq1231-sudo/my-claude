@@ -277,36 +277,37 @@ def person(c, cx, base, h, kind):
 
 
 def calorie_notice(c, top, bottom):
-    """Daily calorie needs: man 2500, woman 2000, child 1800 (SFDA menu guidance)."""
+    """Compact daily calorie needs notice: man 2500, woman 2000, child 1800 (SFDA guidance)."""
     c.setFillColor(CREAM_LT)
     c.setStrokeColor(RULE)
-    c.setLineWidth(1.4 * mm)
-    c.roundRect(X(25), Y(bottom), 550 * mm, (bottom - top) * mm, 18 * mm, stroke=1, fill=1)
-    runs(c, [("DAILY CALORIE NEEDS", "Oswald-Bold", 52, MAROON), ("   |   ", "Oswald-Medium", 52, ORANGE),
-             (Arabic("الاحتياج اليومي من السعرات الحرارية", "Cairo-Bold", 46), MAROON)],
-         X(300), Y(top + 30))
+    c.setLineWidth(1 * mm)
+    c.roundRect(X(40), Y(bottom), 520 * mm, (bottom - top) * mm, 12 * mm, stroke=1, fill=1)
+    runs(c, [("DAILY CALORIE NEEDS", "Oswald-Bold", 30, MAROON), ("   |   ", "Oswald-Medium", 30, ORANGE),
+             (Arabic("الاحتياج اليومي من السعرات الحرارية", "Cairo-Bold", 27), MAROON)],
+         X(300), Y(top + 17))
     groups = [("man", "MAN", "الرجل", "2,500", 1.0),
               ("woman", "WOMAN", "المرأة", "2,000", 1.0),
               ("child", "CHILD", "الطفل", "1,800", 0.78)]
-    col_w = 550 / 3
+    col_w = 520 / 3
     for i, (kind, en, ar_t, kcal, scale) in enumerate(groups):
-        x0 = 25 + i * col_w
+        x0 = 40 + i * col_w
         if i:
             c.setStrokeColor(RULE)
-            c.setLineWidth(1 * mm)
-            c.line(X(x0), Y(top + 52), X(x0), Y(bottom - 14))
-        person(c, X(x0 + 32), Y(bottom - 22), 92 * mm * scale, kind)
-        tx = x0 + 68
-        runs(c, [(en, "Oswald-Bold", 44, INK)], X(tx) + pdfmetrics.stringWidth(en, "Oswald-Bold", 44) / 2, Y(top + 74))
-        a = Arabic(ar_t, "Cairo-Bold", 44)
-        a.draw(c, X(x0 + col_w - 12) - a.width, Y(top + 74), INK)
+            c.setLineWidth(0.8 * mm)
+            c.line(X(x0), Y(top + 27), X(x0), Y(bottom - 7))
+        person(c, X(x0 + 24), Y(bottom - 9), 44 * mm * scale, kind)
+        tx = x0 + 44
+        runs(c, [(en + "  ", "Oswald-Bold", 26, INK)],
+             X(tx) + pdfmetrics.stringWidth(en + "  ", "Oswald-Bold", 26) / 2, Y(top + 36))
+        Arabic(ar_t, "Cairo-Bold", 26).draw(c, X(tx) + pdfmetrics.stringWidth(en + "  ", "Oswald-Bold", 26),
+                                            Y(top + 36), INK)
         c.setFillColor(ORANGE)
-        c.setFont("Oswald-Bold", 104)
-        c.drawString(X(tx), Y(top + 118), kcal)
+        c.setFont("Oswald-Bold", 54)
+        c.drawString(X(tx), Y(top + 57), kcal)
         c.setFillColor(INK)
-        c.setFont("Montserrat-Bold", 30)
-        c.drawString(X(tx), Y(top + 134), "kcal / day")
-        Arabic("سعرة حرارية في اليوم", "Cairo-Medium", 34).draw(c, X(tx), Y(top + 150), INK)
+        c.setFont("Montserrat-Bold", 18)
+        c.drawString(X(tx) + pdfmetrics.stringWidth(kcal + " ", "Oswald-Bold", 54), Y(top + 57), "kcal / day")
+        Arabic("سعرة حرارية في اليوم", "Cairo-Medium", 22).draw(c, X(tx), Y(top + 69), INK)
 
 
 def build():
@@ -345,7 +346,7 @@ def build():
     c.line(X(480), Y(y_t - 18), X(560), Y(y_t - 18))
 
     # Meal cards, photos alternating sides
-    top, bottom = 570, 1665
+    top, bottom = 570, 1765
     ch = (bottom - top) / len(MEALS)
     for i, meal in enumerate(MEALS):
         t = top + i * ch
@@ -358,7 +359,7 @@ def build():
         meal_card(c, meal, t, ch, photo_left=(i % 2 == 0))
 
     # Daily calorie needs notice (SFDA guidance)
-    calorie_notice(c, 1672, 1862)
+    calorie_notice(c, 1775, 1856)
 
     # Footer: stripes + VAT note
     c.setFillColor(MAROON)
