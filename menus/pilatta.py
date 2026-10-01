@@ -125,6 +125,8 @@ def wave_band(c, y_top, y_bottom, color, down=True, amp=9, waves=4):
 # --- photos and cards ---------------------------------------------------------
 
 PAGE_RGB = (220, 227, 252)
+BOWL_W = 235   # mm, drawn width of every bowl
+BREAD_MOVE = {"pilatta-three-cheese.jpg": (-235, 35)}   # px shift for a bread shot far from its bowl
 
 
 def bowl_photo(fname):
@@ -141,6 +143,23 @@ def bowl_photo(fname):
     keep = Image.fromarray((ndi.binary_dilation(main, iterations=30) * 255).astype(np.uint8))
     keep = np.asarray(keep.filter(ImageFilter.GaussianBlur(14)), dtype=float)[..., None] / 255
     a = a * keep + bg * (1 - keep)                       # paint over doodles / captions
+    if fname in BREAD_MOVE:                               # bring a far-off garlic bread next to the bowl
+        warm = ndi.binary_opening((a[..., 0] > a[..., 2] + 40) & (a[..., 0] > 120), iterations=3)
+        wl, wn = ndi.label(warm)
+        sizes = ndi.sum(warm, wl, range(1, wn + 1))
+        bread = wl == (np.argsort(sizes)[::-1][1] + 1)    # 2nd-largest warm blob (1st is the pasta)
+        dx, dy = BREAD_MOVE[fname]
+        sel = Image.fromarray((ndi.binary_dilation(bread, iterations=10) * 255).astype(np.uint8))
+        sel = np.asarray(sel.filter(ImageFilter.GaussianBlur(4)), dtype=float)[..., None] / 255
+        patch = a.copy()
+        a = a * (1 - sel) + bg * sel                      # lift the bread off its old spot
+        sel2 = np.roll(sel, (dy, dx), axis=(0, 1))
+        a = a * (1 - sel2) + np.roll(patch, (dy, dx), axis=(0, 1)) * sel2
+        main = (main & ~ndi.binary_dilation(bread, iterations=40)) | np.roll(bread, (dy, dx), axis=(0, 1))
+        x_end = np.where(np.roll(bread, (dy, dx), axis=(0, 1)).any(axis=0))[0].max() + 20
+        main[:, x_end:] = False
+        ramp = np.clip((np.arange(a.shape[1]) - x_end) / 40, 0, 1)[None, :, None]
+        a = a * (1 - ramp) + bg * ramp                    # clear leftovers beyond the bread
     a = np.clip(a + (np.array(PAGE_RGB) - bg), 0, 255)   # backdrop -> page colour
     ys, xs = np.where(main)
     pad = int(0.10 * (xs.max() - xs.min()))
@@ -153,7 +172,12 @@ def bowl_photo(fname):
     buf = io.BytesIO()
     out.save(buf, "JPEG", quality=92, subsampling=0)
     buf.seek(0)
-    return ImageReader(buf), out.width / out.height
+    # Bowl rim width (top part of the mask, above the bread) as a share of the crop,
+    # so every bowl can be drawn at the same size whatever the framing.
+    top = main[ys.min():ys.min() + int(0.35 * (ys.max() - ys.min()))]
+    cols = np.where(top.any(axis=0))[0]
+    rim = (cols.max() - cols.min()) / (box[2] - box[0])
+    return ImageReader(buf), out.width / out.height, rim
 
 
 def pasta_card(c, item, top, height, photo_left):
@@ -164,8 +188,8 @@ def pasta_card(c, item, top, height, photo_left):
     tx = (margin + photo_w + gap) if photo_left else margin
     tcx = X(tx + text_w / 2)
 
-    img, ratio = bowl_photo(photo)
-    w = photo_w * mm
+    img, ratio, rim = bowl_photo(photo)
+    w = BOWL_W * mm / rim            # same bowl width on every card
     h = min(w / ratio, (height - 10) * mm)
     w = h * ratio
     c.drawImage(img, X(px + photo_w / 2) - w / 2, Y(top + height / 2) - h / 2, w, h)
