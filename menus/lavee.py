@@ -48,10 +48,10 @@ SECTIONS = [
     ("SWEETS", "الحلويات", [
         ("Honey Cake", "كيكة العسل", "18", None),
         ("Cheesecake", "تشيز كيك", "18", None),
-        ("Carrot Cake", "كيكة الجزر", "18", None),
-        ("Date Cake", "كيكة التمر", "18", None),
+        ("Chocolate Cake", "كيكة الشوكولاتة", "18", None),
+        ("Red Velvet", "ريد فيلفيت", "18", None),
         ("Brownie Bites", "قطع البراونيز", "16", None),
-        ("Coconut Bites", "قطع جوز الهند", "16", None),
+        ("Lamington", "لامنجتون", "16", None),
     ]),
 ]
 
