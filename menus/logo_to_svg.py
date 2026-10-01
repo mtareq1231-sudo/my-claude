@@ -65,8 +65,11 @@ def main():
     ap.add_argument("src")
     ap.add_argument("out")
     ap.add_argument("--bg", required=True)
+    ap.add_argument("--scale", type=int, default=4, help="upscale factor before tracing (lower for big sources)")
     ap.add_argument("layers", nargs="+")
     args = ap.parse_args()
+    global SCALE
+    SCALE = args.scale
 
     im = Image.open(args.src).convert("RGB")
     im = im.resize((im.width * SCALE, im.height * SCALE), Image.LANCZOS).filter(ImageFilter.GaussianBlur(SCALE * 0.6))
