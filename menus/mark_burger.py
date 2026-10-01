@@ -1,8 +1,9 @@
 """Mark Burger standing menu panel — print file.
 
 Same panel system as jan_burger.py (600 x 2000 mm trim, 5 mm bleed, vector
-text and logo), styled on the Mark brand DNA: blue page, checkerboard bands,
-big lowercase white/orange type, cut-out food and thin white line art.
+text and logo), styled on the Mark brand DNA: checkerboard bands, big lowercase
+blue/white + orange type, cut-out food and thin line art.
+Two page themes: white (main) and blue (alternative).
 Edit BURGERS below and re-run:  python3 menus/mark_burger.py
 """
 import os
@@ -19,10 +20,11 @@ import jan_burger as base
 from jan_burger import Arabic, H, W, X, Y, calorie_notice, draw_logo, rgb, runs
 
 HERE = base.HERE
-OUT = os.path.join(HERE, "out", "mark-burger-menu-600x2000mm.pdf")
+OUTS = {"white": os.path.join(HERE, "out", "mark-burger-menu-600x2000mm.pdf"),
+        "blue": os.path.join(HERE, "out", "mark-burger-menu-blue-600x2000mm.pdf")}
 CURRENCY = "SAR"
 BURGERS = [
-    # (headline white, headline orange, Arabic, price, kcal, photo) — Food World e-menu
+    # (headline word 1, headline word 2 (orange), Arabic, price, kcal, photo) — Food World e-menu
     ("mark", "double", "مارك دبل سماش برجر", "42", "410", "mark-double-smash.jpg"),
     ("mark", "triple", "مارك تربل سماش برجر", "48", "488", "mark-triple-smash.jpg"),
 ]
@@ -35,6 +37,13 @@ ORANGE = rgb("#EC6B3A")
 WHITE = rgb("#FFFFFF")
 INK = rgb("#14294A")
 RULE = rgb("#C9D3E3")
+
+# Per-theme colours: page, main text / line art, drop shadow (RGB, alpha)
+THEMES = {
+    "white": dict(page=WHITE, fg=BLUE, shadow=((20, 40, 80), 80)),
+    "blue": dict(page=BLUE, fg=WHITE, shadow=((11, 30, 62), 150)),
+}
+T = THEMES["white"]
 
 pdfmetrics.registerFont(TTFont("Montserrat-ExtraBold", os.path.join(HERE, "fonts", "Montserrat-ExtraBold.ttf")))
 HEAD = "Montserrat-ExtraBold"
@@ -56,7 +65,7 @@ def checker(c, y_top, rows=2, size=16):
 
 
 def cutout(fname):
-    """Remove the grey studio backdrop and add a soft blue drop shadow."""
+    """Remove the grey studio backdrop and add a soft drop shadow."""
     im = Image.open(os.path.join(base.ASSETS, fname)).convert("RGB")
     a = np.asarray(im, dtype=float)
     bg_l = np.median(a[:20, :20].mean(axis=2))
@@ -74,10 +83,10 @@ def cutout(fname):
     pad = 40
     l, t, r, b = box
     sh_h = int((r - l) * 0.10)                      # room for the shadow below
-    out = Image.new("RGBA", (r - l + 2 * pad, b - t + 2 * pad + sh_h), (11, 30, 62, 0))
+    out = Image.new("RGBA", (r - l + 2 * pad, b - t + 2 * pad + sh_h), (*T["shadow"][0], 0))
     sh = Image.new("L", out.size, 0)
     ImageDraw.Draw(sh).ellipse((pad + (r - l) * 0.12, b - t + pad - sh_h * 0.6,
-                                pad + (r - l) * 0.88, b - t + pad + sh_h * 0.7), fill=150)
+                                pad + (r - l) * 0.88, b - t + pad + sh_h * 0.7), fill=T["shadow"][1])
     out.putalpha(sh.filter(ImageFilter.GaussianBlur(sh_h * 0.45)))
     food = im.crop(box).convert("RGBA")
     food.putalpha(fg.crop(box))
@@ -86,8 +95,8 @@ def cutout(fname):
 
 
 def line_art(c, cx, cy, r, flip):
-    """Thin white '6'-style stroke from the brand artwork."""
-    c.setStrokeColor(WHITE)
+    """Thin '6'-style stroke from the brand artwork."""
+    c.setStrokeColor(T["fg"])
     c.setLineWidth(2.2 * mm)
     c.setLineCap(1)
     c.circle(X(cx), Y(cy), r * mm, stroke=1, fill=0)
@@ -105,9 +114,9 @@ def burger_card(c, item, top, height, left):
     # Line art behind everything, on the side away from the headline
     line_art(c, 455 if left else 145, top + 150, 80, flip=not left)
 
-    # Big lowercase headline: white word, orange word
+    # Big lowercase headline: first word in the theme colour, second in orange
     size = 330
-    for word, color, base_y in ((w1, WHITE, top + 112), (w2, ORANGE, top + 222)):
+    for word, color, base_y in ((w1, T["fg"], top + 112), (w2, ORANGE, top + 222)):
         c.setFillColor(color)
         c.setFont(HEAD, size)
         if left:
@@ -123,7 +132,7 @@ def burger_card(c, item, top, height, left):
 
     # Arabic name, then price pill + calories
     cx = X(300)
-    runs(c, [(Arabic(ar_name, "Cairo-ExtraBold", 72).fit(520 * mm), WHITE)], cx, Y(bottom - 92))
+    runs(c, [(Arabic(ar_name, "Cairo-ExtraBold", 72).fit(520 * mm), T["fg"])], cx, Y(bottom - 92))
     y = bottom - 70
     pw = (pdfmetrics.stringWidth(price, HEAD, 130)
           + pdfmetrics.stringWidth(" " + CURRENCY, HEAD, 48) + 50 * mm)
@@ -135,30 +144,36 @@ def burger_card(c, item, top, height, left):
     c.roundRect(x0, Y(y + 58), pw, 58 * mm, 29 * mm, stroke=0, fill=1)
     runs(c, [(price, HEAD, 130, WHITE), (" " + CURRENCY, HEAD, 48, WHITE)], x0 + pw / 2, Y(y + 45))
     kx = x0 + pw + gap + kw / 2
-    runs(c, [(kcal + " kcal", HEAD, 52, WHITE)], kx, Y(y + 27))
-    runs(c, [(ar_k, WHITE)], kx, Y(y + 49))
+    runs(c, [(kcal + " kcal", HEAD, 52, T["fg"])], kx, Y(y + 27))
+    runs(c, [(ar_k, T["fg"])], kx, Y(y + 49))
 
 
-def build():
+def build(theme):
+    global T
+    T = THEMES[theme]
+    OUT = OUTS[theme]
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     c = canvas.Canvas(OUT, pagesize=(W, H))
     c.setTitle("Mark Burger — Menu Panel 600x2000mm")
     c.setAuthor("Rakhy Group Food Court")
     cx = X(300)
 
-    c.setFillColor(BLUE)
+    c.setFillColor(T["page"])
     c.rect(0, 0, W, H, stroke=0, fill=1)
     checker(c, -5, rows=3)
 
-    # Logo reversed out in white, with a thin white ring
+    # Logo: white lettering (on a blue disc on the white page), thin ring
+    if theme == "white":
+        c.setFillColor(BLUE)
+        c.circle(cx, Y(215), 158 * mm, stroke=0, fill=1)
     draw_logo(c, cx, Y(215), 300 * mm)
-    c.setStrokeColor(WHITE)
+    c.setStrokeColor(T["fg"])
     c.setLineWidth(2.2 * mm)
     c.circle(cx, Y(215), 168 * mm, stroke=1, fill=0)
 
     # Section title: burgers | البرجر
     y_t = 470
-    runs(c, [("burgers", HEAD, 150, WHITE), ("   ", HEAD, 150, WHITE),
+    runs(c, [("burgers", HEAD, 150, T["fg"]), ("   ", HEAD, 150, T["fg"]),
              (Arabic("البرجر", "Cairo-ExtraBold", 130), ORANGE)], cx, Y(y_t))
 
     top, bottom = 500, 1765
@@ -176,8 +191,8 @@ def build():
     calorie_notice(c, 1775, 1856)
 
     # Footer: VAT note + checkerboard
-    runs(c, [("PRICES INCLUDE VAT", HEAD, 52, WHITE), ("   |   ", HEAD, 52, ORANGE),
-             (Arabic("الأسعار شاملة ضريبة القيمة المضافة", "Cairo-Bold", 54).fit(290 * mm), WHITE)],
+    runs(c, [("PRICES INCLUDE VAT", HEAD, 52, T["fg"]), ("   |   ", HEAD, 52, ORANGE),
+             (Arabic("الأسعار شاملة ضريبة القيمة المضافة", "Cairo-Bold", 54).fit(290 * mm), T["fg"])],
          cx, Y(1905))
     checker(c, 1957, rows=3)
 
@@ -195,4 +210,5 @@ def build():
 
 
 if __name__ == "__main__":
-    build()
+    for theme in THEMES:
+        build(theme)
