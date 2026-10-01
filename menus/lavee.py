@@ -13,7 +13,7 @@ from reportlab.pdfgen import canvas
 
 from pilatta import draw_svg_logo   # noqa: E402  (also loads the shared helpers)
 import jan_burger as base
-from jan_burger import Arabic, H, W, X, Y, calorie_notice, rgb, runs
+from jan_burger import Arabic, H, W, X, Y, rgb, runs
 
 HERE = base.HERE
 OUT = os.path.join(HERE, "out", "lavee-menu-600x2000mm.pdf")
@@ -63,7 +63,7 @@ GREY = rgb("#8A8378")
 RULE = rgb("#E6D7B5")
 WHITE = rgb("#FFFFFF")
 
-# Shared calorie notice: white box, black text, gold numbers.
+# Shared helper colours (no calorie notice on this panel).
 base.CREAM_LT, base.MAROON, base.ORANGE, base.INK, base.RULE = WHITE, BLACK, GOLD, BLACK, RULE
 
 
@@ -147,7 +147,7 @@ def build():
     c.circle(cx, Y(y_m + 6), 2.6 * mm, stroke=0, fill=1)
 
     # Sections: share the space evenly between rows
-    top, bottom = 380, 1760
+    top, bottom = 385, 1845
     head_h, gap = 62, 26
     n_items = sum(len(s[2]) for s in SECTIONS)
     row_h = (bottom - top - len(SECTIONS) * head_h - (len(SECTIONS) - 1) * gap) / n_items
@@ -160,8 +160,6 @@ def build():
         for item in items:
             item_row(c, item, y)
             y += row_h
-
-    calorie_notice(c, 1775, 1856)
 
     # Footer: black band, VAT note in white with a gold divider
     c.setFillColor(GOLD)
