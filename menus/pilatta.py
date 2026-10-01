@@ -26,11 +26,11 @@ HERE = base.HERE
 OUT = os.path.join(HERE, "out", "pilatta-menu-600x2000mm.pdf")
 CURRENCY = "SAR"
 PASTAS = [
-    # (English, Arabic, price, kcal or None, photo) — from the Food World e-menu
-    ("Spaghetti Bolognese", "سباغيتي بولونيز", "41", None, "pilatta-spaghetti-bolognese.jpg"),
-    ("Fettuccine Alfredo", "فوتوتشيني ألفريدو", "43", None, "pilatta-fettuccine-alfredo.jpg"),
-    ("Truffle Pasta", "ترافل", "51", None, "pilatta-truffle.jpg"),
-    ("Three Cheese Pasta", "باستا الثلاثة أجبان", "39", None, "pilatta-three-cheese.jpg"),
+    # (English, Arabic, price, kcal, photo) — from the Food World e-menu
+    ("Spaghetti Bolognese", "سباغيتي بولونيز", "41", "850", "pilatta-spaghetti-bolognese.jpg"),
+    ("Fettuccine Alfredo", "فوتوتشيني ألفريدو", "43", "920", "pilatta-fettuccine-alfredo.jpg"),
+    ("Truffle Pasta", "ترافل", "51", "980", "pilatta-truffle.jpg"),
+    ("Three Cheese Pasta", "باستا الثلاثة أجبان", "39", "900", "pilatta-three-cheese.jpg"),
 ]
 
 # Pilatta palette (sampled from the packaging photos)
