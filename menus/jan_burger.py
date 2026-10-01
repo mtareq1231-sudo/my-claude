@@ -1,14 +1,19 @@
 """Jan Burger standing menu panel — print file.
 
 Trim size 600 x 2000 mm, 5 mm bleed on every side, vector text and vector logo.
-Edit MENU below and re-run:  python3 menus/jan_burger.py
+Edit MEALS below and re-run:  python3 menus/jan_burger.py
 
-Colours are RGB so the page background matches the product photo's backdrop
+Colours are RGB so the page background matches the product photos' backdrop
 exactly; the printer's RIP converts the whole file to CMYK in one pass.
 """
 import json
 import os
 
+import numpy as np
+import uharfbuzz as hb
+from fontTools.pens.basePen import BasePen
+from fontTools.pens.transformPen import TransformPen
+from fontTools.ttLib import TTFont as FTFont
 from PIL import Image, ImageFilter
 from reportlab.lib.colors import Color
 from reportlab.lib.units import mm
@@ -19,21 +24,20 @@ from reportlab.pdfgen import canvas
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "out", "jan-burger-menu-600x2000mm.pdf")
-LOGO = os.path.join(HERE, "assets", "jan-logo.json")         # from vectorize_logo.py
-PHOTO = os.path.join(HERE, "assets", "jan-burger-photo.jpg")
-PHOTO_CROP = (300, 200, 1620, 1000)                           # px box around the products
+ASSETS = os.path.join(HERE, "assets")
+LOGO = os.path.join(ASSETS, "jan-logo.json")                 # from vectorize_logo.py
 
 TRIM_W, TRIM_H, BLEED = 600 * mm, 2000 * mm, 5 * mm
 W, H = TRIM_W + 2 * BLEED, TRIM_H + 2 * BLEED
 
-# Placeholder content — replace with Jan's real items/prices.
+# From the Food World e-menu (foodworld.web.order.sa). Prices in SAR.
 CURRENCY = "SAR"
-MENU = [
-    ("BURGERS", [("Classic Burger", "95"), ("Cheese Burger", "105"),
-                 ("Double Burger", "135"), ("Spicy Burger", "115")]),
-    ("SIDES", [("French Fries", "35"), ("Onion Rings", "40"),
-               ("Mozzarella Sticks", "50")]),
-    ("DRINKS", [("Soft Drinks", "20"), ("Water", "15")]),
+MEALS = [
+    # (English, Arabic, price, kcal, photo)
+    ("Original Beef Meal", "وجبة اللحم الأصلي", "44", "1,151", "jan-original-beef.jpg"),
+    ("Jan Fried Spicy Chicken Meal", "وجبة جان فرايد سبايسي تشيكن", "42", "999", "jan-fried-spicy-chicken.jpg"),
+    ("Jan Crunchy Chicken Meal", "وجبة جان كرانشي تشيكن", "42", "1,069", "jan-crunchy-chicken.jpg"),
+    ("Jan Chicken Meal", "وجبة جان تشيكن", "39", "881", "jan-chicken.jpg"),
 ]
 
 
@@ -42,7 +46,7 @@ def rgb(h):
     return Color(*(int(h[i:i + 2], 16) / 255 for i in (0, 2, 4)))
 
 
-# Jan brand palette (sampled from the supplied logo and photo)
+# Jan brand palette (sampled from the supplied logo and photos)
 CREAM = rgb("#FDF4E5")    # photo backdrop
 CREAM_LT = rgb("#FFFAF4")  # logo disc
 ORANGE = rgb("#F58020")
@@ -63,6 +67,66 @@ def Y(v):  # mm measured down from the top of the trim
     return BLEED + TRIM_H - v * mm
 
 
+class CanvasPathPen(BasePen):
+    """fontTools pen that writes into a ReportLab canvas path."""
+
+    def __init__(self, glyphSet, path):
+        super().__init__(glyphSet)
+        self.path = path
+
+    def _moveTo(self, p):
+        self.path.moveTo(*p)
+
+    def _lineTo(self, p):
+        self.path.lineTo(*p)
+
+    def _curveToOne(self, p1, p2, p3):
+        self.path.curveTo(*p1, *p2, *p3)
+
+    def _closePath(self):
+        self.path.close()
+
+
+class Arabic:
+    """Arabic text shaped with HarfBuzz and drawn as vector glyph outlines.
+
+    ReportLab can't apply Arabic joining forms itself, so shaping happens here
+    and each glyph is drawn as a path (no font embedding needed).
+    """
+
+    def __init__(self, text, font, size):
+        path = os.path.join(HERE, "fonts", font + ".ttf")
+        self.ft = FTFont(path)
+        self.upem = self.ft["head"].unitsPerEm
+        hbf = hb.Font(hb.Face(hb.Blob.from_file_path(path)))
+        buf = hb.Buffer()
+        buf.add_str(text)
+        buf.guess_segment_properties()
+        hb.shape(hbf, buf)
+        self.glyphs = list(zip(buf.glyph_infos, buf.glyph_positions))
+        self.size = size
+        self.width = sum(p.x_advance for _, p in self.glyphs) * size / self.upem
+
+    def fit(self, max_width):
+        if self.width > max_width:
+            self.size *= max_width / self.width
+            self.width = max_width
+        return self
+
+    def draw(self, c, x, y, color):
+        gs, order = self.ft.getGlyphSet(), self.ft.getGlyphOrder()
+        k = self.size / self.upem
+        pen_x = 0
+        path = c.beginPath()
+        for info, pos in self.glyphs:
+            pen = CanvasPathPen(gs, path)
+            gs[order[info.codepoint]].draw(TransformPen(
+                pen, (k, 0, 0, k, x + (pen_x + pos.x_offset) * k, y + pos.y_offset * k)))
+            pen_x += pos.x_advance
+        c.setFillColor(color)
+        c.drawPath(path, stroke=0, fill=1, fillMode=1)
+
+
 def spaced(c, text, font, size, cx, y, tracking=0):
     """Centred text with letter-spacing (tracking in pt)."""
     w = pdfmetrics.stringWidth(text, font, size) + tracking * (len(text) - 1)
@@ -72,6 +136,33 @@ def spaced(c, text, font, size, cx, y, tracking=0):
     t.textOut(text)
     t.setCharSpace(0)  # reset, otherwise tracking leaks into later text
     c.drawText(t)
+
+
+def runs(c, parts, cx, y):
+    """Draw [(text, font, size, color) | (Arabic, color), ...] as one centred line."""
+    def width(p):
+        return p[0].width if isinstance(p[0], Arabic) else pdfmetrics.stringWidth(*p[:3])
+    x = cx - sum(width(p) for p in parts) / 2
+    for p in parts:
+        if isinstance(p[0], Arabic):
+            p[0].draw(c, x, y, p[1])
+        else:
+            c.setFillColor(p[3])
+            c.setFont(p[1], p[2])
+            c.drawString(x, y, p[0])
+        x += width(p)
+
+
+def wrap(text, font, size, width):
+    lines, cur = [], ""
+    for word in text.split():
+        trial = (cur + " " + word).strip()
+        if cur and pdfmetrics.stringWidth(trial, font, size) > width:
+            lines.append(cur)
+            cur = word
+        else:
+            cur = trial
+    return lines + [cur]
 
 
 def stripes(c, y_top, height, color, pitch=36, duty=0.5):
@@ -103,16 +194,63 @@ def draw_logo(c, cx, cy, width):
     return data["h"] * s
 
 
-def photo_reader():
-    """Crop to the products and feather the edges into the page colour."""
-    im = Image.open(PHOTO).convert("RGB").crop(PHOTO_CROP)
+def product_photo(fname):
+    """Crop to the products (auto-detected) and feather edges into the page colour."""
+    im = Image.open(os.path.join(ASSETS, fname)).convert("RGB")
+    a = np.asarray(im, dtype=float)
+    ys, xs = np.where(np.linalg.norm(a - a[5, 5], axis=2) > 40)
+    # Shift the photo so its backdrop matches the page cream exactly.
+    a = np.clip(a + (np.array([253, 244, 229]) - np.median(a[:20, :20].reshape(-1, 3), axis=0)), 0, 255)
+    im = Image.fromarray(a.astype(np.uint8))
+    pad = int(0.08 * (xs.max() - xs.min()))
+    im = im.crop((max(xs.min() - pad, 0), max(ys.min() - pad, 0),
+                  min(xs.max() + pad, im.width), min(ys.max() + pad, im.height)))
     im = im.resize((im.width * 2, im.height * 2), Image.LANCZOS)
     m = Image.new("L", im.size, 0)
-    f = int(im.width * 0.06)
+    f = int(min(im.size) * 0.07)
     m.paste(255, (f, f, im.width - f, im.height - f))
     m = m.filter(ImageFilter.GaussianBlur(f / 2))
     bg = Image.new("RGB", im.size, (253, 244, 229))
     return ImageReader(Image.composite(im, bg, m)), im.width / im.height
+
+
+def meal_card(c, meal, top, height, photo_left):
+    en, ar_name, price, kcal, photo = meal
+    photo_w, gap, margin = 330, 10, 30
+    text_w = 600 - 2 * margin - photo_w - gap
+    px = margin if photo_left else 600 - margin - photo_w
+    tx = (margin + photo_w + gap) if photo_left else margin
+    tcx = X(tx + text_w / 2)
+
+    img, ratio = product_photo(photo)
+    w = photo_w * mm
+    h = min(w / ratio, (height - 20) * mm)
+    w = h * ratio
+    c.drawImage(img, X(px + photo_w / 2) - w / 2, Y(top + height / 2) - h / 2, w, h)
+
+    # Text block, vertically centred in the card
+    lines = wrap(en.upper(), "Oswald-Bold", 74, text_w * mm)
+    lh = 27
+    block = len(lines) * lh + 30 + 75 + 22
+    y = top + (height - block) / 2 + 22
+    c.setFillColor(MAROON)
+    for ln in lines:
+        spaced(c, ln, "Oswald-Bold", 74, tcx, Y(y))
+        y += lh
+    runs(c, [(Arabic(ar_name, "Cairo-Bold", 56).fit(text_w * mm), INK)], tcx, Y(y + 2))
+    y += 30
+
+    # Price pill
+    pw = (pdfmetrics.stringWidth(price, "Oswald-Bold", 150)
+          + pdfmetrics.stringWidth(" " + CURRENCY, "Oswald-Medium", 54) + 50 * mm)
+    c.setFillColor(ORANGE)
+    c.roundRect(tcx - pw / 2, Y(y + 62), pw, 62 * mm, 31 * mm, stroke=0, fill=1)
+    runs(c, [(price, "Oswald-Bold", 150, CREAM_LT), (" " + CURRENCY, "Oswald-Medium", 54, CREAM_LT)],
+         tcx, Y(y + 50))
+    y += 75 + 18
+
+    runs(c, [(kcal + " kcal", "Montserrat-Bold", 40, INK), ("   |   ", "Montserrat-Medium", 40, RULE),
+             (Arabic("سعرة حرارية", "Cairo-Medium", 42), INK)], tcx, Y(y))
 
 
 def build():
@@ -129,78 +267,48 @@ def build():
     # Header: maroon block with a bun-shaped bottom edge, stripes on top
     c.setFillColor(MAROON)
     p = c.beginPath()
-    p.moveTo(0, H); p.lineTo(W, H); p.lineTo(W, Y(330))
-    p.curveTo(X(470), Y(430), X(130), Y(430), 0, Y(330))
+    p.moveTo(0, H); p.lineTo(W, H); p.lineTo(W, Y(290))
+    p.curveTo(X(470), Y(380), X(130), Y(380), 0, Y(290))
     p.close()
     c.drawPath(p, stroke=0, fill=1)
-    stripes(c, -5, 75, MAROON_DK)
+    stripes(c, -5, 70, MAROON_DK)
     c.setFillColor(ORANGE)
-    c.rect(0, Y(80), W, 8 * mm, stroke=0, fill=1)
+    c.rect(0, Y(73), W, 8 * mm, stroke=0, fill=1)
 
-    # Logo sits on the header edge, cream disc on maroon
-    logo_w = 430 * mm
-    draw_logo(c, cx, Y(320), logo_w)
+    # Logo sits on the header edge
+    draw_logo(c, cx, Y(275), 370 * mm)
 
-    # "MENU"
-    y_menu = 650
-    c.setFillColor(MAROON)
-    spaced(c, "MENU", "Oswald-Bold", 150, cx, Y(y_menu), 30)
+    # Section title: MEALS | الوجبات
+    y_t = 545
+    runs(c, [("MEALS", "Oswald-Bold", 140, MAROON), ("   ", "Oswald-Bold", 140, MAROON),
+             (Arabic("الوجبات", "Cairo-Bold", 120), MAROON)], cx, Y(y_t))
     c.setStrokeColor(ORANGE)
     c.setLineWidth(2.2 * mm)
     c.setLineCap(1)
-    c.line(X(60), Y(y_menu - 20), X(170), Y(y_menu - 20))
-    c.line(X(430), Y(y_menu - 20), X(540), Y(y_menu - 20))
+    c.line(X(40), Y(y_t - 18), X(120), Y(y_t - 18))
+    c.line(X(480), Y(y_t - 18), X(560), Y(y_t - 18))
 
-    # Menu sections
-    left, right = 60, 540
-    y = y_menu + 85
-    for title, items in MENU:
-        # orange pill with the section name
-        tw = pdfmetrics.stringWidth(title, "Oswald-Bold", 110)
-        c.setFillColor(ORANGE)
-        c.roundRect(X(left), Y(y + 14), tw + 50 * mm, 56 * mm, 28 * mm, stroke=0, fill=1)
-        c.setFillColor(CREAM_LT)
-        c.setFont("Oswald-Bold", 110)
-        c.drawString(X(left) + 25 * mm, Y(y), title)
-        c.setStrokeColor(RULE)
-        c.setLineWidth(1.2 * mm)
-        c.line(X(left) + tw + 65 * mm, Y(y - 14), X(right), Y(y - 14))
-        y += 66
-        for name, price in items:
-            c.setFillColor(INK)
-            c.setFont("Montserrat-Bold", 80)
-            c.drawString(X(left + 6), Y(y), name)
-            c.setFillColor(MAROON)
-            c.setFont("Oswald-Bold", 100)
-            c.drawRightString(X(right), Y(y), price)
-            nw = pdfmetrics.stringWidth(name, "Montserrat-Bold", 80)
-            pw = pdfmetrics.stringWidth(price, "Oswald-Bold", 100)
+    # Meal cards, photos alternating sides
+    top, bottom = 580, 1850
+    ch = (bottom - top) / len(MEALS)
+    for i, meal in enumerate(MEALS):
+        t = top + i * ch
+        if i:
             c.setStrokeColor(RULE)
             c.setLineWidth(1.6 * mm)
             c.setDash(0.1, 5 * mm)
-            c.line(X(left + 6) + nw + 10 * mm, Y(y - 1), X(right) - pw - 10 * mm, Y(y - 1))
+            c.line(X(60), Y(t), X(540), Y(t))
             c.setDash()
-            y += 44
-        y += 34
-    c.setFillColor(INK)
-    c.setFont("Montserrat-Medium", 40)
-    c.drawRightString(X(right), Y(y - 20), f"Prices in {CURRENCY}")
+        meal_card(c, meal, t, ch, photo_left=(i % 2 == 0))
 
-    # Product photo, full width, feathered into the cream
-    img, ratio = photo_reader()
-    ph_w = 610 * mm
-    ph_h = ph_w / ratio
-    ph_bottom = Y(1860)
-    c.drawImage(img, 0, ph_bottom, ph_w, ph_h)
-
-    # Footer: stripes + "SINCE 1985"
+    # Footer: stripes + note
     c.setFillColor(MAROON)
-    c.rect(0, 0, W, Y(1870), stroke=0, fill=1)
-    stripes(c, 1940, 65, MAROON_DK)
+    c.rect(0, 0, W, Y(1872), stroke=0, fill=1)
+    stripes(c, 1945, 60, MAROON_DK)
     c.setFillColor(ORANGE)
-    c.rect(0, Y(1878), W, 8 * mm, stroke=0, fill=1)
-    c.setFillColor(CREAM_LT)
-    spaced(c, "SINCE 1985", "Oswald-Medium", 80, cx, Y(1922), 14)
+    c.rect(0, Y(1880), W, 8 * mm, stroke=0, fill=1)
+    runs(c, [("PRICES IN SAR", "Oswald-Medium", 64, CREAM_LT), ("    |    ", "Oswald-Medium", 64, ORANGE),
+             (Arabic("الأسعار بالريال السعودي", "Cairo-Bold", 58), CREAM_LT)], cx, Y(1925))
 
     c.showPage()
     c.save()
