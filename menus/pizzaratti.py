@@ -5,6 +5,7 @@ text and logo, side-by-side meal cards). White page, Pizzaratti red header
 with the logo reversed out, checkered-tablecloth bands, cut-out pizzas.
 Edit PIZZAS below and re-run:  python3 menus/pizzaratti.py
 """
+import io
 import os
 
 import numpy as np
@@ -63,7 +64,10 @@ def pizza_photo(fname, pad_frac=0.04):
     canvas_im.paste(Image.new("RGB", canvas_im.size, (60, 40, 30)), (0, 0), shadow)
     canvas_im.paste(im.crop(box), (0, 0), alpha.crop(box))
     canvas_im = canvas_im.resize((canvas_im.width * 2, canvas_im.height * 2), Image.LANCZOS)
-    return ImageReader(canvas_im), canvas_im.width / canvas_im.height
+    buf = io.BytesIO()                       # JPEG keeps the print file small
+    canvas_im.save(buf, "JPEG", quality=92, subsampling=0)
+    buf.seek(0)
+    return ImageReader(buf), canvas_im.width / canvas_im.height
 
 
 base.product_photo = pizza_photo
