@@ -47,6 +47,7 @@ def rgb(h):
 
 
 # Jan brand palette (sampled from the supplied logo and photos)
+PAGE_RGB = (253, 244, 229)  # page colour; photo backdrops are shifted to match
 CREAM = rgb("#FDF4E5")    # photo backdrop
 CREAM_LT = rgb("#FFFAF4")  # logo disc
 ORANGE = rgb("#F58020")
@@ -199,8 +200,8 @@ def product_photo(fname, pad_frac=0.08):
     im = Image.open(os.path.join(ASSETS, fname)).convert("RGB")
     a = np.asarray(im, dtype=float)
     ys, xs = np.where(np.linalg.norm(a - a[5, 5], axis=2) > 40)
-    # Shift the photo so its backdrop matches the page cream exactly.
-    a = np.clip(a + (np.array([253, 244, 229]) - np.median(a[:20, :20].reshape(-1, 3), axis=0)), 0, 255)
+    # Shift the photo so its backdrop matches the page colour exactly.
+    a = np.clip(a + (np.array(PAGE_RGB) - np.median(a[:20, :20].reshape(-1, 3), axis=0)), 0, 255)
     im = Image.fromarray(a.astype(np.uint8))
     pad = int(pad_frac * (xs.max() - xs.min()))
     im = im.crop((max(xs.min() - pad, 0), max(ys.min() - pad, 0),
@@ -210,7 +211,7 @@ def product_photo(fname, pad_frac=0.08):
     f = int(min(im.size) * 0.07)
     m.paste(255, (f, f, im.width - f, im.height - f))
     m = m.filter(ImageFilter.GaussianBlur(f / 2))
-    bg = Image.new("RGB", im.size, (253, 244, 229))
+    bg = Image.new("RGB", im.size, PAGE_RGB)
     return ImageReader(Image.composite(im, bg, m)), im.width / im.height
 
 
