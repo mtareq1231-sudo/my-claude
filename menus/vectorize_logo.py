@@ -31,8 +31,10 @@ def main(src, out, specs):
     bg = np.all(a > 252, axis=2)
 
     cols = [(hex2rgb(s.split(":")[0]), s.split(":")[1], s.split(":")[0]) for s in specs]
-    dist = np.stack([np.linalg.norm(a - c, axis=2) for c, _, _ in cols])
-    nearest = dist.argmin(axis=0)
+    # White competes as well, so pale anti-aliased fringes stay background.
+    dist = np.stack([np.linalg.norm(a - 255, axis=2)] + [np.linalg.norm(a - c, axis=2) for c, _, _ in cols])
+    nearest = dist.argmin(axis=0) - 1
+    bg |= nearest < 0
 
     layers = []
     for i, (_, name, hx) in enumerate(cols):
