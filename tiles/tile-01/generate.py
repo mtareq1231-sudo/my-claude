@@ -19,9 +19,9 @@ RED = "#B5573F"     # terracotta
 GREY = "#BEBDBA"    # light grey
 
 # Quatrefoil band
-LOBE_OFFSET = 99    # distance from centre to each lobe circle centre
-LOBE_R = 79         # band centre-line radius
-BAND = 17           # band width
+LOBE_OFFSET = 100   # distance from centre to each lobe circle centre
+LOBE_R_IN = 70.9    # inner edge radius of each lobe (inner edges meet at the spike tips)
+LOBE_R_OUT = 88.5    # outer edge radius of each lobe
 
 
 def f(x):
@@ -42,7 +42,7 @@ def diag_intersection(r, outer=True):
 
 def quatrefoil_path():
     """Dark band as one compound path: outer outline + inner hole (even-odd)."""
-    ro, ri = LOBE_R + BAND / 2, LOBE_R - BAND / 2
+    ro, ri = LOBE_R_OUT, LOBE_R_IN
     a = diag_intersection(ro)   # outer cusps
     b = diag_intersection(ri)   # inner cusps = spike tips pointing at the clovers
     def ring(r, c):
@@ -61,18 +61,18 @@ def vesica(cx, cy, length, width):
             f"A{f(r)} {f(r)} 0 0 1 {f(cx)} {f(cy - h)}Z")
 
 
-def clover(cx, cy, stem_angle_deg, lobe_r=8.5, lobe_d=8.5):
+def clover(cx, cy, stem_angle_deg, lobe_r=8.2, lobe_d=10):
     """Three-lobed clover; the missing fourth lobe points along stem_angle."""
     parts = []
     for k in (1, 2, 3):
         a = math.radians(stem_angle_deg + 90 * k)
         parts.append(f'<circle cx="{f(cx + lobe_d * math.cos(a))}" cy="{f(cy + lobe_d * math.sin(a))}" r="{f(lobe_r)}"/>')
-    # filled heart so the lobes read as one piece
-    parts.append(f'<circle cx="{f(cx)}" cy="{f(cy)}" r="{f(lobe_d * 0.6)}"/>')
-    # short stub of stem
+    # filled heart so the three lobes read as one piece
+    parts.append(f'<circle cx="{f(cx)}" cy="{f(cy)}" r="{f(lobe_d * 0.9)}"/>')
+    # short, thick neck on the stem side
     a = math.radians(stem_angle_deg)
-    sx, sy = cx + 10 * math.cos(a), cy + 10 * math.sin(a)
-    parts.append(f'<path d="M{f(cx)} {f(cy)} L{f(sx)} {f(sy)}" stroke-width="6" stroke-linecap="round"/>')
+    nx, ny = cx + 5 * math.cos(a), cy + 5 * math.sin(a)
+    parts.append(f'<path d="M{f(cx)} {f(cy)} L{f(nx)} {f(ny)}" stroke-width="11" stroke-linecap="round"/>')
     return parts
 
 
@@ -95,28 +95,30 @@ def mirror(points):
 
 # Crescent in the top lobe (traced from the photo). Sharp point at the bottom,
 # rounded hook at the top; it opens toward the inner clover.
-CRESCENT = [(-25, -65), (-12, -77), (-6, -97), (-13, -118), (-30, -128), (-46, -122),
-            (-52, -110), (-48.5, -104), (-44, -110), (-37, -114.5), (-28, -111),
-            (-21, -100), (-19, -83), (-25, -65)]
+CRESCENT = [(-25.5, -66), (-16, -70), (-10, -77.5), (-6.9, -87.5), (-6.2, -98.5), (-8.7, -108.7),
+            (-15, -117.5), (-23.7, -125), (-32.5, -128.2), (-40, -129), (-48.7, -127),
+            (-53.7, -122.5), (-56.2, -116), (-55.6, -110), (-52.5, -103.8), (-49.4, -100.3),
+            (-47.5, -104.5), (-45.6, -110), (-41.2, -113.2), (-33.7, -113.8), (-26.2, -110),
+            (-20.6, -102.5), (-18.1, -92.5), (-18.7, -83.7), (-20.6, -75), (-25.5, -66)]
 
-# Acanthus leaf growing off the corner stem toward the top edge: a smooth outer
-# edge, three scallops on the inner edge, and a small eye near the base.
+# Acanthus leaf traced from the photo. It grows out of the corner stem on a
+# short stalk, curls up toward the top edge, has three scallops on its inner
+# edge and a hooked lower lobe. Each list is one smooth edge; corners sit
+# between lists. The first and last points sit inside the stem.
 LEAF_EDGES = [
-    [(-137.5, -146), (-131, -159), (-122.5, -167.5), (-112.5, -174), (-105, -182.5), (-100, -195.5)],
-    [(-100, -195.5), (-93.5, -189.5), (-91, -180), (-97, -172.5)],
-    [(-97, -172.5), (-92.5, -167), (-94, -160.5), (-99.5, -157.5)],
-    [(-99.5, -157.5), (-95.5, -152.5), (-97.5, -146.5), (-103, -143.5)],
-    [(-103, -143.5), (-110, -139.5), (-116, -137.5), (-121, -133)],
+    [(-144, -140), (-138.5, -144), (-135.5, -150), (-132.5, -159), (-127, -167.5), (-118.5, -174.5),
+     (-110.5, -180), (-106, -186.5), (-104, -196)],
+    [(-104, -196), (-98, -192.5), (-93.5, -186), (-93, -179.5), (-97.5, -172)],
+    [(-97.5, -172), (-94, -167.5), (-95, -163), (-98.5, -160.5)],
+    [(-98.5, -160.5), (-95, -157), (-96.5, -152), (-101, -148), (-105.5, -144),
+     (-109, -140.5), (-113.5, -139)],
+    [(-113.5, -139), (-116, -142), (-117.5, -147), (-121.5, -151.5), (-126.5, -150.5),
+     (-129.5, -147), (-128.5, -141), (-126, -136), (-124, -128)],
 ]
-LEAF_EYE = ((-125, -147), 2.5)
 
 
-def leaf_path(edges, eye):
-    d = f"M{pt(edges[0][0])} " + " ".join(spline(e) for e in edges) + " Z"
-    (cx, cy), r = eye
-    d += (f" M{f(cx - r)} {f(cy)} A{f(r)} {f(r)} 0 1 0 {f(cx + r)} {f(cy)} "
-          f"A{f(r)} {f(r)} 0 1 0 {f(cx - r)} {f(cy)}Z")
-    return d
+def leaf_path(edges):
+    return f"M{pt(edges[0][0])} " + " ".join(spline(e) for e in edges) + " Z"
 
 
 def quarter_motif():
@@ -128,16 +130,15 @@ def quarter_motif():
         dark.append(f'<path d="M{pt(pts[0])} {spline(pts)} Z"/>')
 
     # corner ornament: grey stem + two acanthus leaves, red clover at the tile corner
-    grey.append('<path d="M-166 -166 L-92 -92" stroke-width="7" stroke-linecap="round"/>')
-    grey.append(f'<path d="{leaf_path(LEAF_EDGES, LEAF_EYE)}" fill-rule="evenodd"/>')
-    (ex, ey), er = LEAF_EYE
-    grey.append(f'<path d="{leaf_path([mirror(e) for e in LEAF_EDGES], ((ey, ex), er))}" fill-rule="evenodd"/>')
-    red += clover(-169, -169, 45)
+    grey.append('<path d="M-168 -168 L-97 -97" stroke-width="8" stroke-linecap="round"/>')
+    grey.append(f'<path d="{leaf_path(LEAF_EDGES)}"/>')
+    grey.append(f'<path d="{leaf_path([mirror(e) for e in LEAF_EDGES])}"/>')
+    red += clover(-168, -168, 45)
 
     # inner clover at the tip of the band's spike
-    red += clover(-53, -55, 225)
-    # nub where the band's two lobes meet on the outside
-    dark.append('<circle cx="-93" cy="-93" r="6.5"/>')
+    red += clover(-55.5, -55.5, 225)
+    # short rounded point where the band's two lobes meet on the outside
+    dark.append('<path d="M-84 -84 L-95.5 -95.5" stroke-width="10" stroke-linecap="round"/>')
     return dark, red, grey
 
 
@@ -153,11 +154,11 @@ def layers(full):
         return f'  <g id="{name}" {attr}>\n{body}\n  </g>'
     shared = [
         f'<path d="{quatrefoil_path()}" fill-rule="evenodd"/>',
-        f'<circle cx="0" cy="0" r="32.5" fill="none" stroke="{DARK}" stroke-width="11.5"/>',
-        f'<path d="{vesica(0, -140, 52, 28)}"/>',
-        f'<path d="{vesica(0, 140, 52, 28)}"/>',
-        f'<path d="{vesica(0, -140, 52, 28)}" transform="rotate(90)"/>',
-        f'<path d="{vesica(0, -140, 52, 28)}" transform="rotate(-90)"/>',
+        f'<circle cx="0" cy="0" r="32.75" fill="none" stroke="{DARK}" stroke-width="12.5"/>',
+        f'<path d="{vesica(0, -141, 58, 30)}"/>',
+        f'<path d="{vesica(0, 141, 58, 30)}"/>',
+        f'<path d="{vesica(0, -141, 58, 30)}" transform="rotate(90)"/>',
+        f'<path d="{vesica(0, -141, 58, 30)}" transform="rotate(-90)"/>',
     ]
     return "\n".join([
         group("grey", GREY, grey, f'fill="{GREY}" stroke="{GREY}" stroke-width="0"'),
