@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-8 -8 808 196" role="img" aria-labelledby="t">
+  <title id="t">Leader Jo</title>
+  <!-- Vector stand-in redrawn from the supplied logo image. Replace with the master artwork when available. -->
+  <g fill="#2C4A6E" fill-rule="evenodd">
+    <path d="M0 0H22V78H92V100H0Z"/>
+    <path transform="translate(110 0)" d="M0 0H92V22H22V39H84V61H22V78H92V100H0Z"/>
+    <path transform="translate(220 0)" d="M0 100V28Q0 0 28 0H76Q104 0 104 28V100H82V61H22V100ZM22 39H82V28Q82 22 76 22H28Q22 22 22 28Z"/>
+    <path transform="translate(342 0)" d="M0 0H76Q104 0 104 28V72Q104 100 76 100H0ZM22 22V78H76Q82 78 82 72V28Q82 22 76 22Z"/>
+    <path transform="translate(464 0)" d="M0 0H92V22H22V39H84V61H22V78H92V100H0Z"/>
+    <path transform="translate(574 0)" d="M0 0H72Q100 0 100 28V40Q100 61 79 61H76L100 100H74L50 61H22V100H0ZM22 22V39H72Q78 39 78 33V28Q78 22 72 22Z"/>
+  </g>
+  <g fill="none" stroke="#7FBFC8" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M690 97C684 85 699 78 717 79C735 80 752 78 771 70"/>
+    <path d="M749 80C741 108 723 142 703 164C693 175 678 175 680 163C682 151 699 143 719 139C729 137 737 129 742 122"/>
+    <path d="M761 111C749 110 740 123 744 132C748 140 762 138 768 128C774 118 769 110 761 111C768 112 776 113 788 107"/>
+  </g>
+</svg>

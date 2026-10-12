@@ -1,0 +1,1144 @@
+<title>Leader Jo Brand System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Reem+Kufi:wght@400..700&family=Aref+Ruqaa:wght@400;700&family=Saira:wdth,wght@50..125,300..800&display=swap">
+<style>
+/* Layout: one 1160px column. Every section opens with facing headings, English left and Arabic right,
+   the way Jordanian signage pairs them; Arabic is set larger and leads on phones.
+   Panels round only their leading-edge corners, like the D and R in LEADER; RTL mirrors them. */
+:root {
+  /* Brand colours (fixed in every theme) */
+  --lj-navy: #2C4A6E;      /* Wadi Rum Night: the LEADER navy, sampled from the logo */
+  --lj-aqua: #7FBFC8;      /* Aqaba Aqua: the Jo colour, sampled from the logo */
+  --lj-stone: #F3F5F6;     /* Amman Stone */
+  --lj-ink: #131D2A;       /* Basalt */
+  --lj-steel: #5E6C7B;     /* Citadel Grey */
+  --lj-mist: #E4F1F3;      /* Dead Sea Salt (tint) */
+  --lj-aqua-deep: #2B6F7A; /* Deep Aqua (text-safe aqua) */
+  --lj-white: #FFFFFF;
+
+  /* Theme tokens (light) */
+  --bg: var(--lj-stone);
+  --surface: #FFFFFF;
+  --surface-2: #E9EDF0;
+  --fg: var(--lj-ink);
+  --muted: var(--lj-steel);
+  --line: #D3DAE0;
+  --heading: var(--lj-navy);
+  --accent-text: var(--lj-aqua-deep);
+  --logo-word: var(--lj-navy);
+  --logo-jo: var(--lj-aqua);
+  --focus: var(--lj-aqua-deep);
+
+  /* Type */
+  --font-display: "Saira", "Eurostile", "Microgramma", "Arial", system-ui, sans-serif;
+  --font-text: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-ar-display: "Reem Kufi", "Noto Kufi Arabic", "Geeza Pro", Tahoma, sans-serif;
+  --font-ar-text: "IBM Plex Sans Arabic", "Noto Sans Arabic", "Geeza Pro", Tahoma, sans-serif;
+  --font-ar-hand: "Aref Ruqaa", "Noto Naskh Arabic", "Geeza Pro", serif;
+
+  /* Shape + space */
+  --r-lead: 14px;
+  --r-small: 6px;
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+  --space-5: 24px; --space-6: 32px; --space-7: 48px; --space-8: 72px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1722; --surface: #172231; --surface-2: #1D2A3B;
+    --fg: #E8EDF0; --muted: #9AA7B4; --line: #2A3748;
+    --heading: #E8EDF0; --accent-text: var(--lj-aqua);
+    --logo-word: var(--lj-stone); --logo-jo: var(--lj-aqua); --focus: var(--lj-aqua);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1722; --surface: #172231; --surface-2: #1D2A3B;
+  --fg: #E8EDF0; --muted: #9AA7B4; --line: #2A3748;
+  --heading: #E8EDF0; --accent-text: var(--lj-aqua);
+  --logo-word: var(--lj-stone); --logo-jo: var(--lj-aqua); --focus: var(--lj-aqua);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  background: var(--bg); color: var(--fg);
+  font-family: var(--font-text); font-size: 16px; line-height: 1.6;
+  padding-inline: 20px;
+}
+:lang(ar) { font-family: var(--font-ar-text); }
+h1, h2, h3 { font-family: var(--font-display); color: var(--heading); text-wrap: balance; margin: 0; line-height: 1.15; }
+p { margin: 0; }
+a { color: var(--accent-text); }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+.wrap { max-width: 1160px; margin-inline: auto; }
+.muted { color: var(--muted); }
+.small { font-size: 14px; }
+
+/* Logo plumbing */
+.lw { fill: var(--logo-word); }
+.lj { fill: none; stroke: var(--logo-jo); stroke-width: var(--jo-weight, 4.2); stroke-linecap: round; stroke-linejoin: round; }
+svg.logo { display: block; width: 100%; height: auto; overflow: visible; }
+svg.fill { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+/* Labels */
+.label {
+  font-family: var(--font-display); font-stretch: 112%; font-weight: 600;
+  font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted);
+}
+.label-ar { font-family: var(--font-ar-text); font-weight: 500; font-size: 14px; color: var(--muted); }
+
+/* Top bar */
+.topbar {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10;
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+  margin-inline: -20px; padding-inline: 20px;
+}
+.topbar .wrap { display: flex; align-items: center; gap: var(--space-5); min-height: 56px; }
+.topbar .mark { width: 112px; flex: none; }
+.topbar nav { display: flex; gap: var(--space-5); overflow-x: auto; scrollbar-width: none; min-width: 0; }
+.topbar nav::-webkit-scrollbar { display: none; }
+.topbar nav a {
+  color: var(--muted); text-decoration: none; white-space: nowrap;
+  font-family: var(--font-display); font-stretch: 112%; font-weight: 600; font-size: 12px;
+  letter-spacing: .1em; text-transform: uppercase; padding-block: 18px;
+}
+.topbar nav a:hover { color: var(--fg); }
+
+/* Hero */
+.hero { padding-block: var(--space-7) var(--space-8); display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-6); }
+.hero-meta { display: flex; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap; align-items: baseline; }
+.logo-stage {
+  background: var(--lj-white);
+  border-start-end-radius: var(--r-lead); border-end-end-radius: var(--r-lead);
+  padding: clamp(40px, 9vw, 112px) clamp(24px, 8vw, 120px) clamp(48px, 10vw, 120px);
+  border: 1px solid var(--line);
+  --logo-word: var(--lj-navy); --logo-jo: var(--lj-aqua);
+}
+.logo-stage svg { max-width: 760px; margin-inline: auto; }
+.line-ar { font-family: var(--font-ar-display); font-weight: 700; color: var(--heading); font-size: clamp(52px, 10vw, 120px); line-height: 1.25; text-align: right; }
+.line-en { font-family: var(--font-display); font-stretch: 118%; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); font-size: clamp(15px, 2vw, 22px); text-align: right; margin-top: -4px; }
+.facing { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-7); align-items: start; }
+.facing > div { display: grid; gap: var(--space-3); min-width: 0; }
+.facing p { font-size: 17px; max-width: 58ch; }
+.facing [lang="ar"] p, .facing p[lang="ar"] { font-size: 19px; line-height: 1.85; }
+.haybah { font-size: 14.5px; color: var(--muted); border-inline-start: 2px solid var(--lj-aqua); padding-inline-start: var(--space-3); }
+
+.places { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3px; }
+.place { position: relative; height: 150px; overflow: hidden; }
+.place:last-child { border-start-end-radius: var(--r-lead); border-end-end-radius: var(--r-lead); }
+.place .tag-l { position: absolute; inset-inline: 14px; bottom: 12px; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; z-index: 1; }
+.place .tag-l b { font-family: var(--font-ar-display); font-weight: 700; font-size: 20px; }
+.place .tag-l span { font-family: var(--font-display); font-stretch: 112%; font-weight: 600; font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; }
+.on-light { color: var(--lj-navy); }
+.on-dark { color: var(--lj-stone); }
+.on-dark span { color: var(--lj-aqua); }
+
+/* Sections */
+.section { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-7); padding-block: var(--space-8); border-top: 1px solid var(--line); scroll-margin-top: 60px; }
+.sec-head { display: flex; justify-content: space-between; align-items: flex-end; gap: var(--space-4) var(--space-7); flex-wrap: wrap; }
+.sec-head .en, .sec-head .ar { display: grid; gap: var(--space-2); min-width: 0; flex: 1 1 300px; }
+.sec-head .ar { text-align: right; }
+.sec-head h2 { font-size: clamp(20px, 2.4vw, 27px); font-stretch: 115%; font-weight: 700; text-transform: uppercase; letter-spacing: .02em; }
+.sec-head .h-ar { font-family: var(--font-ar-display); font-weight: 700; font-size: clamp(32px, 4.4vw, 50px); line-height: 1.35; color: var(--heading); }
+.section h3 { font-size: 15px; font-stretch: 112%; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+.intro { display: grid; gap: var(--space-4); max-width: 70ch; }
+.block { display: grid; gap: var(--space-5); }
+.block-head { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-4); flex-wrap: wrap; }
+
+/* Idea */
+.idea { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-5); }
+.idea-card { background: var(--surface); border: 1px solid var(--line); border-start-end-radius: var(--r-lead); border-end-end-radius: var(--r-lead); padding: var(--space-6); display: grid; gap: var(--space-4); align-content: start; }
+.idea-card .glyph { height: 84px; display: flex; align-items: center; }
+.idea-card .glyph svg { height: 100%; width: auto; max-width: 100%; }
+.idea-card h3 { font-size: 20px; letter-spacing: .04em; }
+.idea-card .ar { font-size: 17px; line-height: 1.8; color: var(--muted); }
+.traits { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 2px solid var(--heading); }
+.trait { padding: var(--space-5) var(--space-4) var(--space-4) 0; display: grid; gap: var(--space-2); align-content: start; }
+.trait + .trait { padding-inline-start: var(--space-4); border-inline-start: 1px solid var(--line); }
+.trait .ar { font-family: var(--font-ar-display); font-weight: 700; font-size: 24px; color: var(--heading); line-height: 1.4; }
+.trait b { font-family: var(--font-display); font-stretch: 115%; font-size: 16px; text-transform: uppercase; color: var(--heading); letter-spacing: .03em; }
+.trait .not { color: var(--muted); font-size: 14px; }
+
+/* Logo tiles */
+.tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); }
+.tile { display: grid; gap: var(--space-3); align-content: start; margin: 0; }
+.tile .plate { aspect-ratio: 16 / 10; display: grid; place-items: center; padding: 14% 12%; border: 1px solid var(--line); border-start-end-radius: var(--r-lead); border-end-end-radius: var(--r-lead); max-width: 100%; }
+.tile .plate svg { width: 100%; }
+.tile .plate.sig svg { width: 46%; }
+.cap { display: grid; gap: 2px; font-size: 14px; }
+.cap b { font-weight: 600; }
+.cap span { color: var(--muted); }
+.p-white { background: var(--lj-white); --logo-word: var(--lj-navy); --logo-jo: var(--lj-aqua); }
+.p-navy { background: var(--lj-navy); --logo-word: var(--lj-white); --logo-jo: var(--lj-aqua); border-color: transparent !important; }
+.p-ink { background: var(--lj-ink); --logo-word: var(--lj-stone); --logo-jo: var(--lj-aqua); border-color: transparent !important; }
+.p-aqua { background: var(--lj-aqua); --logo-word: var(--lj-navy); --logo-jo: var(--lj-navy); border-color: transparent !important; }
+.p-mono { background: var(--lj-stone); --logo-word: var(--lj-navy); --logo-jo: var(--lj-navy); }
+
+.construct { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: var(--space-6); align-items: center; }
+.construct .plate { background: var(--surface); border: 1px solid var(--line); padding: var(--space-5); border-start-end-radius: var(--r-lead); border-end-end-radius: var(--r-lead); }
+.construct svg { display: block; width: 100%; height: auto; }
+.construct svg text { font-family: var(--font-display); font-size: 22px; font-weight: 600; fill: var(--muted); letter-spacing: .08em; }
+.guide-line { stroke: var(--accent-text); stroke-width: 2; fill: none; stroke-dasharray: 8 7; }
+.guide-box { stroke: var(--line); stroke-width: 2; fill: none; }
+.guide-x { fill: var(--accent-text); opacity: .18; }
+.facts { display: grid; gap: var(--space-4); margin: 0; }
+.facts div { display: grid; gap: 2px; border-top: 1px solid var(--line); padding-top: var(--space-3); }
+.facts dt { font-weight: 600; }
+.facts dd { margin: 0; color: var(--muted); font-size: 15px; }
+
+.donts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-4); }
+.dont { display: grid; gap: var(--space-2); font-size: 14px; align-content: start; }
+.dont .plate { aspect-ratio: 4 / 3; background: var(--lj-white); border: 1px solid var(--line); display: grid; place-items: center; padding: 10%; position: relative; overflow: hidden; --logo-word: var(--lj-navy); --logo-jo: var(--lj-aqua); max-width: 100%; }
+.dont .plate::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top right, transparent calc(50% - 1px), #C0392B calc(50% - 1px), #C0392B calc(50% + 1px), transparent calc(50% + 1px)); opacity: .55; }
+.dont b { font-weight: 600; }
+.dont span { color: var(--muted); }
+
+.ar-lockup { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-5); align-items: stretch; }
+.ar-plate { background: var(--lj-white); border: 1px solid var(--line); border-start-end-radius: var(--r-lead); border-end-end-radius: var(--r-lead); display: grid; place-items: center; padding: var(--space-6); min-height: 220px; }
+.ar-word { display: flex; align-items: flex-end; gap: 10px; }
+.ar-word .w { font-family: var(--font-ar-display); font-weight: 700; color: var(--lj-navy); font-size: clamp(56px, 8vw, 92px); line-height: 1; }
+.ar-word .j { font-family: var(--font-ar-hand); color: var(--lj-aqua); font-size: clamp(40px, 5.6vw, 64px); line-height: 1; transform: translateY(0.35em); }
+
+/* Colour */
+.swatches { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: var(--space-4); }
+.swatch { grid-column: span 2; display: grid; grid-template-rows: auto 1fr; border: 1px solid var(--line); background: var(--surface); border-start-end-radius: var(--r-lead); border-end-end-radius: var(--r-lead); overflow: hidden; }
+.swatch.core { grid-column: span 3; }
+.swatch .chip { min-height: 160px; padding: var(--space-5); display: flex; flex-direction: column; justify-content: space-between; gap: var(--space-4); }
+.swatch.core .chip { min-height: 230px; }
+.swatch .chip .name-ar { font-family: var(--font-ar-display); font-weight: 700; font-size: 26px; line-height: 1.3; }
+.swatch.core .chip .name-ar { font-size: 34px; }
+.swatch .chip .name { font-family: var(--font-display); font-stretch: 115%; font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: .08em; opacity: .9; }
+.swatch .chip .role { font-size: 13.5px; opacity: .92; max-width: 36ch; }
+.swatch .specs { padding: var(--space-4) var(--space-5); display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2px var(--space-4); font-size: 13.5px; font-variant-numeric: tabular-nums; align-content: start; margin: 0; }
+.swatch .specs dt { color: var(--muted); }
+.swatch .specs dd { margin: 0; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 13px; overflow-wrap: anywhere; }
+.copy { appearance: none; border: 1px solid currentColor; background: transparent; color: inherit; font-size: 12px; font-family: var(--font-display); font-weight: 600; letter-spacing: .1em; text-transform: uppercase; padding: 6px 10px; border-radius: var(--r-small); cursor: pointer; align-self: flex-start; }
+.copy:hover { background: color-mix(in srgb, currentColor 12%, transparent); }
+.c-navy { background: var(--lj-navy); color: var(--lj-white); }
+.c-aqua { background: var(--lj-aqua); color: var(--lj-ink); }
+.c-stone { background: var(--lj-stone); color: var(--lj-ink); box-shadow: inset 0 -1px 0 #D3DAE0; }
+.c-ink { background: var(--lj-ink); color: var(--lj-stone); }
+.c-steel { background: var(--lj-steel); color: var(--lj-white); }
+.c-mist { background: var(--lj-mist); color: var(--lj-ink); box-shadow: inset 0 -1px 0 #D3DAE0; }
+.c-deep { background: var(--lj-aqua-deep); color: var(--lj-white); }
+.c-white { background: var(--lj-white); color: var(--lj-ink); box-shadow: inset 0 -1px 0 #D3DAE0; }
+
+.ratio { display: grid; gap: var(--space-3); }
+.ratio-bar { display: flex; height: 56px; border: 1px solid var(--line); border-start-end-radius: var(--r-lead); border-end-end-radius: var(--r-lead); overflow: hidden; }
+.ratio-bar span { display: flex; align-items: flex-end; padding: 6px 8px; font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; min-width: 0; overflow: hidden; white-space: nowrap; }
+.ratio-legend { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-5); font-size: 14px; color: var(--muted); }
+
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 14.5px; }
+th, td { text-align: start; padding: 12px 16px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+tr:last-child td { border-bottom: 0; }
+th { font-family: var(--font-display); font-stretch: 112%; font-weight: 600; font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); background: var(--surface-2); }
+th[lang="ar"] { font-family: var(--font-ar-text); letter-spacing: 0; font-size: 13px; text-align: right; }
+td.num { font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; }
+.pair { display: inline-grid; place-items: center; width: 64px; height: 36px; font-weight: 600; font-size: 16px; border-radius: var(--r-small); border: 1px solid var(--line); }
+.verdict { display: inline-block; font-size: 12px; font-weight: 600; letter-spacing: .04em; padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
+.v-good { background: #DDEFE4; color: #1D5A35; }
+.v-ok { background: #FBEFD5; color: #6E4B0B; }
+.v-no { background: #F7DEDB; color: #8A2318; }
+
+/* Textures */
+.textures { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); }
+.texture { display: grid; gap: var(--space-3); align-content: start; margin: 0; }
+.texture .swatch-t { position: relative; aspect-ratio: 4 / 5; overflow: hidden; border-start-end-radius: var(--r-lead); border-end-end-radius: var(--r-lead); max-width: 100%; }
+.texture .t-name { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-2); }
+.texture .t-name b { font-family: var(--font-ar-display); font-weight: 700; font-size: 24px; color: var(--heading); }
+.texture .t-name span { font-family: var(--font-display); font-stretch: 112%; font-weight: 700; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--heading); }
+.texture p { font-size: 14.5px; color: var(--muted); }
+.texture .use { font-size: 13.5px; }
+.texture .use b { color: var(--fg); font-weight: 600; }
+.rules { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); }
+.rule { border-top: 2px solid var(--heading); padding-top: var(--space-3); font-size: 15px; display: grid; gap: var(--space-1); align-content: start; }
+.rule b { font-weight: 600; }
+.rule span { color: var(--muted); }
+
+/* Type */
+.fonts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); }
+.font-card { background: var(--surface); border: 1px solid var(--line); border-start-end-radius: var(--r-lead); border-end-end-radius: var(--r-lead); padding: var(--space-5); display: grid; gap: var(--space-3); align-content: start; }
+.font-card .spec { font-size: 76px; line-height: 1.15; color: var(--heading); }
+.font-card .meta { display: flex; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; align-items: baseline; }
+.font-card .meta b { font-weight: 600; font-family: var(--font-text); }
+.font-card p { font-size: 14.5px; color: var(--muted); }
+.f-saira { font-family: var(--font-display); font-stretch: 125%; font-weight: 700; }
+.f-plex { font-family: var(--font-text); font-weight: 500; }
+.f-reem { font-family: var(--font-ar-display); font-weight: 700; text-align: right; }
+.f-plex-ar { font-family: var(--font-ar-text); font-weight: 500; text-align: right; }
+
+.scale td:first-child { white-space: nowrap; }
+.s-display { font-family: var(--font-display); font-stretch: 125%; font-weight: 700; font-size: 44px; line-height: 1.05; text-transform: uppercase; color: var(--heading); }
+.s-h1 { font-family: var(--font-display); font-stretch: 118%; font-weight: 700; font-size: 32px; line-height: 1.1; text-transform: uppercase; color: var(--heading); }
+.s-h2 { font-family: var(--font-display); font-stretch: 112%; font-weight: 600; font-size: 22px; line-height: 1.2; color: var(--heading); }
+.s-body { font-family: var(--font-text); font-size: 16px; line-height: 1.6; }
+.s-label { font-family: var(--font-display); font-stretch: 112%; font-weight: 600; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; }
+.a-display { font-family: var(--font-ar-display); font-weight: 700; font-size: 52px; line-height: 1.3; color: var(--heading); text-align: right; }
+.a-h1 { font-family: var(--font-ar-display); font-weight: 700; font-size: 38px; line-height: 1.35; color: var(--heading); text-align: right; }
+.a-h2 { font-family: var(--font-ar-text); font-weight: 600; font-size: 26px; line-height: 1.45; color: var(--heading); text-align: right; }
+.a-body { font-family: var(--font-ar-text); font-size: 17px; line-height: 1.8; text-align: right; }
+.a-label { font-family: var(--font-ar-text); font-weight: 600; font-size: 13px; text-align: right; }
+
+.numbers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); }
+.num-card { border-top: 2px solid var(--heading); padding-top: var(--space-3); display: grid; gap: var(--space-2); align-content: start; }
+.num-card .big { font-family: var(--font-display); font-stretch: 115%; font-weight: 700; font-size: 26px; color: var(--heading); font-variant-numeric: tabular-nums; }
+.num-card .big[lang="ar"] { font-family: var(--font-ar-text); font-weight: 600; font-size: 24px; }
+
+/* Graphic language */
+.devices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-5); }
+.device { display: grid; gap: var(--space-3); align-content: start; }
+.corner-demo { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
+.corner-card { background: var(--lj-navy); color: var(--lj-stone); padding: var(--space-5) var(--space-4); min-height: 150px; display: grid; align-content: space-between; gap: var(--space-3); border-start-end-radius: 22px; border-end-end-radius: 22px; }
+.corner-card .t { font-family: var(--font-display); font-stretch: 118%; font-weight: 700; font-size: 17px; text-transform: uppercase; }
+.corner-card[dir="rtl"] .t { font-family: var(--font-ar-display); font-size: 24px; text-transform: none; }
+.corner-card small { color: var(--lj-aqua); font-size: 12.5px; line-height: 1.5; }
+.corner-card[dir="rtl"] small { font-size: 14px; }
+.sig-demo { background: var(--surface); border: 1px solid var(--line); min-height: 150px; display: grid; place-items: center; padding: var(--space-5); border-start-end-radius: var(--r-lead); border-end-end-radius: var(--r-lead); }
+.sig-word { position: relative; display: inline-block; font-family: var(--font-ar-display); font-weight: 700; font-size: clamp(34px, 4.6vw, 48px); color: var(--heading); padding-bottom: 14px; line-height: 1.3; }
+.sig-word svg { position: absolute; inset-inline: -6%; bottom: -4px; width: 112%; height: 28px; overflow: visible; }
+.sig-word path { fill: none; stroke: var(--lj-aqua); stroke-width: 2.4; stroke-linecap: round; }
+.spacing { display: flex; align-items: flex-end; gap: var(--space-4); flex-wrap: wrap; }
+.spacing div { display: grid; gap: 6px; justify-items: start; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.spacing i { display: block; background: var(--lj-aqua); border-start-end-radius: 2px; }
+
+/* Photography + voice */
+.rows { display: grid; border-top: 1px solid var(--line); margin: 0; }
+.row { display: grid; grid-template-columns: 160px minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-5); padding-block: var(--space-4); border-bottom: 1px solid var(--line); }
+.row dt { font-family: var(--font-display); font-stretch: 112%; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--heading); font-size: 14px; padding-top: 2px; }
+.row dd { margin: 0; }
+.row dd[lang="ar"] { text-align: right; font-size: 16.5px; line-height: 1.8; }
+.shots { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-3); }
+.shot { position: relative; aspect-ratio: 3 / 4; overflow: hidden; max-width: 100%; border-start-end-radius: var(--r-lead); border-end-end-radius: var(--r-lead); }
+.shot .txt { position: absolute; inset: auto 0 0 0; padding: var(--space-4); display: grid; gap: 4px; font-size: 13.5px; line-height: 1.4; z-index: 1; }
+.shot .txt b { font-family: var(--font-display); font-stretch: 112%; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; font-size: 13px; }
+.shot .txt .ar { font-family: var(--font-ar-display); font-weight: 700; font-size: 18px; text-align: right; }
+.shot-detail { background: repeating-linear-gradient(135deg, #2C4A6E 0 6px, #27425F 6px 12px); }
+
+.voice-principles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-5); }
+.vp { display: grid; gap: var(--space-2); align-content: start; border-top: 2px solid var(--heading); padding-top: var(--space-3); }
+.vp b { font-family: var(--font-display); font-stretch: 112%; font-weight: 700; text-transform: uppercase; color: var(--heading); letter-spacing: .03em; }
+.vp p { color: var(--muted); font-size: 15px; }
+.voice td { vertical-align: top; }
+.voice td[lang="ar"] { font-size: 17px; line-height: 1.8; text-align: right; }
+.dodont { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); }
+.dd { padding: var(--space-5); border: 1px solid var(--line); background: var(--surface); display: grid; gap: var(--space-2); align-content: start; }
+.dd .verdict { justify-self: start; }
+.dd q { font-size: 18px; }
+.dd q[lang="ar"] { font-size: 20px; text-align: right; }
+
+/* Applications */
+.apps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-5); }
+.app { display: grid; gap: var(--space-3); align-content: start; min-width: 0; margin: 0; }
+.app .stage { background: var(--surface-2); border: 1px solid var(--line); min-height: 320px; display: grid; place-items: center; padding: var(--space-6) var(--space-4); overflow: hidden; }
+.app .cap { font-size: 14px; color: var(--muted); display: block; }
+.app .cap b { color: var(--fg); font-weight: 600; }
+
+.neck { width: min(320px, 100%); background: var(--lj-navy); padding: 22px 28px 16px; display: grid; gap: 8px; justify-items: center; position: relative; box-shadow: 0 10px 24px -14px rgba(19,29,42,.6); --logo-word: var(--lj-white); --logo-jo: var(--lj-aqua); --jo-weight: 5.5; }
+.neck::before, .neck::after { content: ""; position: absolute; top: 6px; bottom: 6px; width: 0; border-inline-start: 2px dashed rgba(127,191,200,.6); }
+.neck::before { left: 10px; } .neck::after { right: 10px; }
+.neck svg { width: 82%; }
+.neck .origin { display: flex; gap: 10px; align-items: baseline; color: var(--lj-aqua); }
+.neck .origin [lang="ar"] { font-family: var(--font-ar-text); font-weight: 600; font-size: 12px; }
+.neck .origin span:not([lang]) { font-family: var(--font-display); font-stretch: 118%; font-weight: 600; font-size: 9.5px; letter-spacing: .24em; text-transform: uppercase; }
+
+.tags { display: flex; gap: 18px; align-items: flex-start; flex-wrap: wrap; justify-content: center; }
+.tag { width: 152px; height: 262px; position: relative; padding: 44px 16px 16px; display: grid; align-content: start; gap: 8px; border-start-end-radius: 14px; box-shadow: 0 12px 24px -16px rgba(19,29,42,.55); overflow: hidden; }
+.tag::before { content: ""; position: absolute; top: 16px; left: 50%; width: 12px; height: 12px; margin-left: -6px; border-radius: 50%; background: var(--surface-2); box-shadow: inset 0 0 0 2px rgba(0,0,0,.12); z-index: 2; }
+.tag-front { background: var(--lj-navy); justify-items: center; align-content: center; --logo-jo: var(--lj-aqua); --jo-weight: 5; }
+.tag-front .jo { width: 92px; position: relative; z-index: 1; }
+.tag-front .small-word { --logo-word: var(--lj-white); width: 100px; position: relative; z-index: 1; margin-top: 14px; }
+.tag-back { background: var(--lj-white); color: var(--lj-ink); font-size: 11.5px; line-height: 1.35; }
+.tag-back .item-ar { font-family: var(--font-ar-display); font-weight: 700; font-size: 17px; color: var(--lj-navy); text-align: right; line-height: 1.3; }
+.tag-back .item { font-family: var(--font-display); font-stretch: 112%; font-weight: 700; font-size: 10.5px; text-transform: uppercase; letter-spacing: .08em; color: var(--lj-steel); text-align: right; }
+.tag-back .kv { display: flex; justify-content: space-between; gap: 6px; font-variant-numeric: tabular-nums; border-top: 1px solid #D3DAE0; padding-top: 5px; }
+.tag-back .kv [lang="ar"] { font-family: var(--font-ar-text); }
+.tag-back .price-ar { font-family: var(--font-ar-text); font-weight: 700; font-size: 16px; color: var(--lj-ink); text-align: right; font-variant-numeric: tabular-nums; }
+.tag-back .price { font-family: var(--font-display); font-stretch: 112%; font-weight: 600; font-size: 11px; color: var(--lj-steel); text-align: right; font-variant-numeric: tabular-nums; margin-top: -4px; }
+.barcode { height: 24px; background: repeating-linear-gradient(90deg, var(--lj-ink) 0 2px, transparent 2px 3px, var(--lj-ink) 3px 4px, transparent 4px 7px, var(--lj-ink) 7px 10px, transparent 10px 11px); }
+
+.bag-wrap { position: relative; width: 220px; padding-top: 58px; }
+.bag-handle { position: absolute; top: 0; left: 50%; width: 92px; height: 120px; margin-left: -46px; border: 5px solid var(--lj-aqua); border-bottom: 0; border-radius: 46px 46px 0 0; }
+.bag { position: relative; background: var(--lj-stone); height: 262px; padding: 34px 26px 18px; display: grid; align-content: space-between; box-shadow: inset 0 0 0 1px #D3DAE0, 0 16px 30px -18px rgba(19,29,42,.6); overflow: hidden; --logo-word: var(--lj-navy); --logo-jo: var(--lj-aqua); --jo-weight: 5; }
+.bag .band { position: absolute; inset: auto 0 0 0; height: 64px; }
+.bag .foot { position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: baseline; color: var(--lj-navy); background: var(--lj-stone); margin-inline: -26px; padding: 6px 12px; margin-bottom: 46px; }
+.bag .foot [lang="ar"] { font-family: var(--font-ar-text); font-weight: 600; font-size: 11px; }
+.bag .foot span:not([lang]) { font-family: var(--font-display); font-stretch: 112%; font-size: 8.5px; letter-spacing: .2em; text-transform: uppercase; }
+
+.ig { width: min(330px, 100%); background: var(--lj-white); color: var(--lj-ink); border: 1px solid #D3DAE0; padding: 14px; display: grid; gap: 12px; }
+.ig-head { display: flex; align-items: center; gap: 12px; }
+.avatar { width: 56px; height: 56px; border-radius: 50%; background: var(--lj-navy); display: grid; place-items: center; flex: none; --logo-jo: var(--lj-aqua); --jo-weight: 6.5; }
+.avatar svg { width: 64%; }
+.ig-head b { font-size: 14px; display: block; }
+.ig-head span { font-size: 12px; color: var(--lj-steel); display: block; }
+.ig-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3px; }
+.ig-grid > div { position: relative; aspect-ratio: 1; display: grid; place-items: center; padding: 8px; text-align: center; max-width: 100%; overflow: hidden; }
+.ig-grid .t1 { background: var(--lj-navy); color: var(--lj-stone); font-family: var(--font-ar-display); font-weight: 700; font-size: 20px; line-height: 1.2; }
+.ig-grid .t1 small { display: block; font-family: var(--font-display); font-stretch: 118%; font-size: 7.5px; letter-spacing: .2em; margin-top: 6px; color: var(--lj-aqua); font-weight: 600; }
+.ig-grid .t2 { background: var(--lj-stone); color: var(--lj-navy); font-family: var(--font-ar-display); font-weight: 700; font-size: 15px; line-height: 1.5; }
+.ig-grid .t3 { background: var(--lj-aqua); --logo-jo: var(--lj-navy); --jo-weight: 6; }
+.ig-grid .t3 svg { width: 62%; }
+.ig-grid .t5 { background: var(--lj-mist); color: var(--lj-navy); font-family: var(--font-ar-text); font-weight: 600; font-size: 11px; line-height: 1.4; }
+.ig-grid .t5 strong { display: block; font-family: var(--font-display); font-stretch: 112%; font-size: 24px; }
+.ig-grid .over { position: relative; z-index: 1; }
+.ig-grid .t6 .over { font-family: var(--font-ar-display); font-weight: 700; font-size: 13px; color: var(--lj-stone); }
+.ig-grid .t4 .over { font-family: var(--font-ar-display); font-weight: 700; font-size: 14px; color: var(--lj-navy); }
+
+/* Tokens */
+.code { position: relative; background: var(--lj-ink); color: #D9E3EA; border-start-end-radius: var(--r-lead); border-end-end-radius: var(--r-lead); }
+.code pre { margin: 0; padding: var(--space-5); padding-top: 56px; overflow-x: auto; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 13px; line-height: 1.65; }
+.code .copy { position: absolute; top: 12px; inset-inline-end: 12px; color: var(--lj-aqua); background: var(--lj-ink); }
+.code .c { color: #7F8FA0; }
+.code .k { color: var(--lj-aqua); }
+
+/* Next steps */
+.asks { display: grid; border-top: 1px solid var(--line); }
+.ask { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: var(--space-4); padding-block: var(--space-4); border-bottom: 1px solid var(--line); }
+.ask .box { width: 18px; height: 18px; border: 2px solid var(--accent-text); border-start-end-radius: 6px; margin-top: 4px; }
+.ask b { font-weight: 600; }
+.ask p { color: var(--muted); font-size: 15px; }
+.decided { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.decided span { font-size: 13.5px; padding: 6px 12px; background: var(--surface); border: 1px solid var(--line); border-start-end-radius: 10px; border-end-end-radius: 10px; }
+.decided b { font-weight: 600; color: var(--heading); }
+
+footer { border-top: 1px solid var(--line); padding-block: var(--space-6) var(--space-7); display: flex; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap; color: var(--muted); font-size: 13.5px; }
+
+.toast { position: fixed; bottom: calc(env(safe-area-inset-bottom, 0px) + 20px); left: 50%; transform: translateX(-50%); background: var(--lj-ink); color: var(--lj-stone); padding: 10px 16px; font-size: 14px; border-start-end-radius: 10px; border-end-end-radius: 10px; box-shadow: 0 10px 30px -10px rgba(0,0,0,.5); z-index: 20; }
+
+/* Responsive */
+@media (max-width: 980px) {
+  .section { padding-block: var(--space-7); gap: var(--space-6); }
+  .construct, .ar-lockup { grid-template-columns: minmax(0, 1fr); }
+  .traits { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .trait:nth-child(3) { padding-inline-start: 0; border-inline-start: 0; }
+  .donts, .shots, .voice-principles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .row { grid-template-columns: 120px minmax(0, 1fr); }
+  .row dd[lang="ar"] { grid-column: 2; }
+}
+@media (max-width: 720px) {
+  .sec-head .ar { order: -1; }
+  .facing { grid-template-columns: minmax(0, 1fr); gap: var(--space-5); }
+  .facing > [lang="ar"] { order: -1; }
+  .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .idea, .fonts, .devices, .apps, .dodont, .numbers, .textures, .rules { grid-template-columns: minmax(0, 1fr); }
+  .texture .swatch-t { aspect-ratio: 16 / 9; }
+  .swatch, .swatch.core { grid-column: span 6; }
+  .row { grid-template-columns: minmax(0, 1fr); gap: var(--space-1); }
+  .row dd[lang="ar"] { grid-column: auto; }
+  .s-display { font-size: 32px; } .a-display { font-size: 38px; }
+  .s-h1 { font-size: 24px; } .a-h1 { font-size: 30px; }
+  .places { grid-template-columns: minmax(0, 1fr); }
+  .place { height: 96px; }
+  .place:last-child { border-radius: 0; }
+}
+@media (max-width: 460px) {
+  body { padding-inline: 16px; }
+  .topbar { margin-inline: -16px; padding-inline: 16px; }
+  .topbar .mark { width: 92px; }
+  .tiles, .traits, .donts, .corner-demo, .voice-principles { grid-template-columns: minmax(0, 1fr); }
+  .trait + .trait { padding-inline-start: 0; border-inline-start: 0; border-top: 1px solid var(--line); }
+  .font-card .spec { font-size: 60px; }
+}
+</style>
+
+<!-- Shared artwork. Logo redrawn from the supplied image as a stand-in until the master file arrives. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <g id="lj-word" class="lw" fill-rule="evenodd">
+      <path d="M0 0H22V78H92V100H0Z"/>
+      <path transform="translate(110 0)" d="M0 0H92V22H22V39H84V61H22V78H92V100H0Z"/>
+      <path transform="translate(220 0)" d="M0 100V28Q0 0 28 0H76Q104 0 104 28V100H82V61H22V100ZM22 39H82V28Q82 22 76 22H28Q22 22 22 28Z"/>
+      <path transform="translate(342 0)" d="M0 0H76Q104 0 104 28V72Q104 100 76 100H0ZM22 22V78H76Q82 78 82 72V28Q82 22 76 22Z"/>
+      <path transform="translate(464 0)" d="M0 0H92V22H22V39H84V61H22V78H92V100H0Z"/>
+      <path transform="translate(574 0)" d="M0 0H72Q100 0 100 28V40Q100 61 79 61H76L100 100H74L50 61H22V100H0ZM22 22V39H72Q78 39 78 33V28Q78 22 72 22Z"/>
+    </g>
+    <g id="lj-jo" class="lj">
+      <path d="M690 97C684 85 699 78 717 79C735 80 752 78 771 70"/>
+      <path d="M749 80C741 108 723 142 703 164C693 175 678 175 680 163C682 151 699 143 719 139C729 137 737 129 742 122"/>
+      <path d="M761 111C749 110 740 123 744 132C748 140 762 138 768 128C774 118 769 110 761 111C768 112 776 113 788 107"/>
+    </g>
+    <g id="lj-logo"><use href="#lj-word"/><use href="#lj-jo"/></g>
+
+    <!-- Amman Stone: limestone ashlar courses -->
+    <pattern id="pat-stone" width="168" height="72" patternUnits="userSpaceOnUse">
+      <rect width="168" height="72" fill="#D3DAE0"/>
+      <rect x="1.5" y="1.5" width="77" height="33" fill="#F3F5F6"/>
+      <rect x="81.5" y="1.5" width="85" height="33" fill="#EDF0F2"/>
+      <rect x="-40.5" y="37.5" width="73" height="33" fill="#EEF1F3"/>
+      <rect x="35.5" y="37.5" width="91" height="33" fill="#F5F7F8"/>
+      <rect x="129.5" y="37.5" width="73" height="33" fill="#EEF1F3"/>
+    </pattern>
+    <!-- Aqaba Sea: wave lines -->
+    <pattern id="pat-sea" width="80" height="22" patternUnits="userSpaceOnUse">
+      <rect width="80" height="22" fill="#E4F1F3"/>
+      <path d="M0 11C13 4 27 4 40 11C53 18 67 18 80 11" fill="none" stroke="#7FBFC8" stroke-width="2"/>
+    </pattern>
+    <!-- Wadi Rum Night: jebel contours under stars -->
+    <symbol id="rum" viewBox="0 0 400 240" preserveAspectRatio="xMidYMid slice">
+      <rect width="400" height="240" fill="#2C4A6E"/>
+      <g fill="#F3F5F6" opacity=".7">
+        <circle cx="34" cy="26" r="1.2"/><circle cx="88" cy="48" r=".9"/><circle cx="142" cy="18" r="1.4"/>
+        <circle cx="206" cy="40" r="1"/><circle cx="262" cy="22" r="1.3"/><circle cx="318" cy="56" r=".9"/>
+        <circle cx="372" cy="30" r="1.2"/><circle cx="236" cy="72" r=".8"/><circle cx="58" cy="70" r=".8"/>
+      </g>
+      <circle cx="300" cy="34" r="2" fill="#7FBFC8"/>
+      <path d="M20 240C20 78 78 90 150 90C222 90 280 78 280 240M42 240C42 106 91 116 150 116C209 116 258 106 258 240M64 240C64 134 103 142 150 142C197 142 236 134 236 240M86 240C86 162 115 168 150 168C185 168 214 162 214 240M108 240C108 190 127 194 150 194C173 194 192 190 192 240M246 240C246 128 284 136 330 136C376 136 414 128 414 240M266 240C266 154 295 160 330 160C365 160 394 154 394 240M286 240C286 180 306 184 330 184C354 184 374 180 374 240M306 240C306 205 317 208 330 208C343 208 354 205 354 240" fill="none" stroke="#557599" stroke-width="1.6"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="topbar">
+  <div class="wrap">
+    <svg class="logo mark" viewBox="-8 -8 808 196" role="img" aria-label="Leader Jo"><use href="#lj-logo"/></svg>
+    <nav aria-label="Sections">
+      <a href="#idea">Idea</a>
+      <a href="#logo">Logo</a>
+      <a href="#colour">Colour</a>
+      <a href="#textures">Textures</a>
+      <a href="#type">Type</a>
+      <a href="#graphics">Graphics</a>
+      <a href="#photo">Photography</a>
+      <a href="#voice">Voice</a>
+      <a href="#applications">Applications</a>
+      <a href="#tokens">Tokens</a>
+      <a href="#next">Next steps</a>
+    </nav>
+  </div>
+</div>
+
+<main class="wrap">
+
+  <header class="hero">
+    <div class="hero-meta">
+      <span class="label">Brand system · Draft 0.2 · October 2026</span>
+      <span class="label-ar" lang="ar" dir="rtl">دليل الهوية البصرية · المسودة الثانية</span>
+    </div>
+    <div class="logo-stage">
+      <svg class="logo" viewBox="-8 -8 808 196" role="img" aria-label="Leader Jo logo"><use href="#lj-logo"/></svg>
+    </div>
+    <div>
+      <h1 class="line-ar" lang="ar" dir="rtl">هيبة بلا ضجيج</h1>
+      <p class="line-en">Presence, without noise</p>
+    </div>
+    <div class="facing">
+      <div>
+        <p>Leader Jo is a fashion label from Jordan for men and women. The logo already holds the whole idea. <strong>LEADER</strong> is the structure: squared letters in navy, built like a sharp jacket. <strong>Jo</strong> is the signature: a hand-written mark in the colour of the water at Aqaba, and the two letters of Jordan's country code.</p>
+        <p class="haybah">Haybah (هيبة) is the word Jordanians use for the presence a real leader brings into a room. The proposed line says the clothes carry that presence without shouting.</p>
+      </div>
+      <div lang="ar" dir="rtl">
+        <p>ليدر جو علامة أزياء أردنية للرجال والنساء. الشعار يحمل الفكرة كلها: كلمة <strong>LEADER</strong> هي البنية، حروف مربّعة بلون كحلي مثل سترة مفصّلة بإتقان. و<strong>Jo</strong> هي التوقيع، بخط اليد وبلون مياه العقبة، وهما أيضاً رمز الأردن على الإنترنت.</p>
+      </div>
+    </div>
+    <div class="places" aria-label="The three places behind the brand">
+      <div class="place"><svg class="fill" aria-hidden="true"><rect width="100%" height="100%" fill="url(#pat-stone)"/></svg><div class="tag-l on-light"><span>Amman stone</span><b lang="ar">حجر عمّان</b></div></div>
+      <div class="place"><svg class="fill" aria-hidden="true"><rect width="100%" height="100%" fill="url(#pat-sea)"/></svg><div class="tag-l on-light"><span>Aqaba sea</span><b lang="ar">بحر العقبة</b></div></div>
+      <div class="place"><svg class="fill" aria-hidden="true"><use href="#rum" width="100%" height="100%"/></svg><div class="tag-l on-dark"><span>Wadi Rum night</span><b lang="ar">ليل وادي رم</b></div></div>
+    </div>
+  </header>
+
+  <!-- IDEA -->
+  <section class="section" id="idea">
+    <header class="sec-head">
+      <div class="en"><span class="label">The idea</span><h2>Two halves of one mark</h2></div>
+      <div class="ar" lang="ar" dir="rtl"><span class="label-ar">الفكرة</span><h2 class="h-ar">نصفان لعلامة واحدة</h2></div>
+    </header>
+    <div class="intro">
+      <p>Read the logo from left to right and you get the brand's character. First the discipline, then the person. Every design decision should serve one of these two halves, and the strongest work holds both.</p>
+    </div>
+    <div class="idea">
+      <article class="idea-card">
+        <div class="glyph" style="--logo-word: var(--heading)"><svg viewBox="-8 -8 690 116" aria-hidden="true"><use href="#lj-word"/></svg></div>
+        <h3>Leader · the structure</h3>
+        <p>Squared, heavy, navy. It stands for the cut, the fit and the finish: things that are measured, not improvised. Typography, grids, spacing and the navy base all come from here.</p>
+        <p class="ar" lang="ar" dir="rtl">البنية: القصّة والمقاس والتشطيب. كل ما هو مدروس وغير مرتجل.</p>
+      </article>
+      <article class="idea-card">
+        <div class="glyph"><svg viewBox="669 60 130 124" aria-hidden="true" style="--jo-weight: 5"><use href="#lj-jo"/></svg></div>
+        <h3>Jo · the signature</h3>
+        <p>Hand-written, light, aqua. It stands for the person wearing the clothes and for home: Amman's stone, the sea at Aqaba, the night over Wadi Rum. Aqua, texture and local detail come from here.</p>
+        <p class="ar" lang="ar" dir="rtl">التوقيع: الشخص الذي يرتدي القطعة، والبلد الذي جاءت منه.</p>
+      </article>
+    </div>
+    <div class="block">
+      <h3>Personality</h3>
+      <div class="traits">
+        <div class="trait"><span class="ar" lang="ar" dir="rtl">رزين</span><b>Composed</b><span class="not">not loud</span></div>
+        <div class="trait"><span class="ar" lang="ar" dir="rtl">دقيق</span><b>Precise</b><span class="not">not fussy</span></div>
+        <div class="trait"><span class="ar" lang="ar" dir="rtl">أصيل</span><b>Rooted</b><span class="not">not folkloric</span></div>
+        <div class="trait"><span class="ar" lang="ar" dir="rtl">قريب</span><b>Warm</b><span class="not">not corporate</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LOGO -->
+  <section class="section" id="logo">
+    <header class="sec-head">
+      <div class="en"><span class="label">Logo</span><h2>The logo, exactly as it is</h2></div>
+      <div class="ar" lang="ar" dir="rtl"><span class="label-ar">الشعار</span><h2 class="h-ar">الشعار كما هو</h2></div>
+    </header>
+    <div class="intro">
+      <p>The logo stays as designed: one fixed lockup, with only its colours changing to suit the background. Use the full-colour version wherever the background allows it, and the one-colour versions for embroidery, foil, embossing and single-ink printing.</p>
+      <p class="muted small">The artwork on this page is redrawn from the image you shared, for layout only. The master file (AI, SVG or PDF) replaces it for anything that gets produced.</p>
+    </div>
+
+    <div class="tiles">
+      <figure class="tile">
+        <div class="plate p-white"><svg class="logo" viewBox="-8 -8 808 196" aria-hidden="true"><use href="#lj-logo"/></svg></div>
+        <figcaption class="cap"><b>Primary</b><span>Navy + aqua on white or stone</span></figcaption>
+      </figure>
+      <figure class="tile">
+        <div class="plate p-navy"><svg class="logo" viewBox="-8 -8 808 196" aria-hidden="true"><use href="#lj-logo"/></svg></div>
+        <figcaption class="cap"><b>Reverse</b><span>White + aqua on navy</span></figcaption>
+      </figure>
+      <figure class="tile">
+        <div class="plate p-ink"><svg class="logo" viewBox="-8 -8 808 196" aria-hidden="true"><use href="#lj-logo"/></svg></div>
+        <figcaption class="cap"><b>Night</b><span>Stone + aqua on Basalt, dark screens</span></figcaption>
+      </figure>
+      <figure class="tile">
+        <div class="plate p-mono"><svg class="logo" viewBox="-8 -8 808 196" aria-hidden="true"><use href="#lj-logo"/></svg></div>
+        <figcaption class="cap"><b>One colour</b><span>All navy: embroidery, stamps, single ink</span></figcaption>
+      </figure>
+      <figure class="tile">
+        <div class="plate p-aqua"><svg class="logo" viewBox="-8 -8 808 196" aria-hidden="true"><use href="#lj-logo"/></svg></div>
+        <figcaption class="cap"><b>On aqua</b><span>All navy. Never white on aqua</span></figcaption>
+      </figure>
+      <figure class="tile">
+        <div class="plate p-navy sig" style="--jo-weight: 5"><svg viewBox="669 60 130 124" aria-hidden="true"><use href="#lj-jo"/></svg></div>
+        <figcaption class="cap"><b>Signature mark</b><span>Jo on its own: avatar, hang tag, button, seal</span></figcaption>
+      </figure>
+    </div>
+
+    <div class="construct">
+      <div class="plate">
+        <svg viewBox="-110 -96 1010 380" role="img" aria-label="Clear space diagram: keep space equal to half the height of the L on every side">
+          <rect class="guide-x" x="-50" y="-50" width="50" height="50"/>
+          <rect class="guide-x" x="790" y="178" width="50" height="50"/>
+          <rect class="guide-line" x="-50" y="-50" width="890" height="278"/>
+          <rect class="guide-box" x="0" y="0" width="790" height="178"/>
+          <line class="guide-line" x1="600" y1="75" x2="820" y2="75"/>
+          <g style="--logo-word: var(--heading)"><use href="#lj-logo"/></g>
+          <text x="-50" y="-62">X</text>
+          <text x="560" y="258">X = ½ HEIGHT OF THE L</text>
+          <text x="826" y="82">¾</text>
+        </svg>
+      </div>
+      <dl class="facts">
+        <div><dt>Clear space</dt><dd>Keep a margin of X on every side, where X is half the height of the L. Nothing else enters that zone.</dd></div>
+        <div><dt>Where Jo sits</dt><dd>Jo starts at about three quarters of the L's height and hangs below the baseline, right after the R. It never moves or resizes on its own.</dd></div>
+        <div><dt>Minimum size</dt><dd>Full lockup: 30 mm wide in print, 140 px on screen. Below that the Jo strokes break up, so use the signature mark (min. 8 mm / 32 px).</dd></div>
+      </dl>
+    </div>
+
+    <div class="block">
+      <h3>Don't</h3>
+      <div class="donts">
+        <div class="dont">
+          <div class="plate"><svg class="logo" viewBox="-8 -8 808 196" aria-hidden="true" style="transform: scaleX(1.3) scaleY(.75)"><use href="#lj-logo"/></svg></div>
+          <b>Stretch or squash it</b><span>Scale proportionally, always.</span>
+        </div>
+        <div class="dont">
+          <div class="plate"><svg class="logo" viewBox="-8 -60 808 248" aria-hidden="true"><use href="#lj-word"/><use href="#lj-jo" transform="translate(-40 -120)"/></svg></div>
+          <b>Move the Jo</b><span>It hangs after the R, below the baseline.</span>
+        </div>
+        <div class="dont">
+          <div class="plate" style="--logo-word:#B0473A; --logo-jo:#E0A33A"><svg class="logo" viewBox="-8 -8 808 196" aria-hidden="true"><use href="#lj-logo"/></svg></div>
+          <b>Recolour it</b><span>Only the versions shown above.</span>
+        </div>
+        <div class="dont">
+          <div class="plate"><svg class="logo" viewBox="-8 -8 808 196" aria-hidden="true" style="filter: drop-shadow(6px 6px 0 #7FBFC8)"><use href="#lj-logo"/></svg></div>
+          <b>Add effects</b><span>No shadows, outlines or gradients.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-head"><h3>Arabic name <span class="muted" style="font-weight:500;letter-spacing:.04em">· proposal</span></h3><span class="label-ar" lang="ar" dir="rtl">الاسم بالعربية</span></div>
+      <div class="ar-lockup">
+        <div class="ar-plate" lang="ar" dir="rtl">
+          <div class="ar-word"><span class="w">ليدر</span><span class="j">جو</span></div>
+        </div>
+        <div class="intro">
+          <p>Since Arabic leads, shop signs, packaging and Arabic posts will need the name in Arabic next to the logo. This is a companion to the logo, not a change to it. The same logic carries over: square Kufi answers the squared LEADER letters, and Ruqʿah, the everyday handwriting of Arabic, answers the Jo script.</p>
+          <p class="muted small">Sketched here in Reem Kufi and Aref Ruqaa. For the final version a calligrapher should draw جو by hand, and ليدر should be drawn to match the weight of LEADER. Please confirm the spelling first.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COLOUR -->
+  <section class="section" id="colour">
+    <header class="sec-head">
+      <div class="en"><span class="label">Colour</span><h2>Navy and aqua, on Amman stone</h2></div>
+      <div class="ar" lang="ar" dir="rtl"><span class="label-ar">الألوان</span><h2 class="h-ar">كحلي وفيروزي على حجر عمّان</h2></div>
+    </header>
+    <div class="intro">
+      <p>The two brand colours come straight from the logo, and there are no others. Neutrals carry everything else, and each colour is named after a place in Jordan. Stone is the default background, navy does the heavy lifting, and aqua is the signature: small amounts, never large fields of text. The warmth comes from photography and words, not from extra colours.</p>
+      <p class="muted small">Values were sampled from the logo image, so confirm them against the master file. CMYK values are starting points only; proof them on your actual paper and fabric.</p>
+    </div>
+
+    <div class="swatches">
+      <article class="swatch core">
+        <div class="chip c-navy"><div><div class="name-ar" lang="ar" dir="rtl">ليل وادي رم</div><div class="name">Wadi Rum Night</div></div><p class="role">The LEADER navy. The sky over Wadi Rum after sunset. Logo, headings, woven labels, packaging.</p><button class="copy" type="button" data-copy="#2C4A6E">Copy hex</button></div>
+        <dl class="specs"><dt>HEX</dt><dd>#2C4A6E</dd><dt>RGB</dt><dd>44 · 74 · 110</dd><dt>CMYK</dt><dd>60 · 33 · 0 · 57</dd></dl>
+      </article>
+      <article class="swatch core">
+        <div class="chip c-aqua"><div><div class="name-ar" lang="ar" dir="rtl">فيروز العقبة</div><div class="name">Aqaba Aqua</div></div><p class="role">The Jo colour. The Red Sea at Aqaba. Accents, stitching, handles, one highlight per layout.</p><button class="copy" type="button" data-copy="#7FBFC8">Copy hex</button></div>
+        <dl class="specs"><dt>HEX</dt><dd>#7FBFC8</dd><dt>RGB</dt><dd>127 · 191 · 200</dd><dt>CMYK</dt><dd>36 · 4 · 0 · 22</dd></dl>
+      </article>
+      <article class="swatch">
+        <div class="chip c-stone"><div><div class="name-ar" lang="ar" dir="rtl">حجر عمّان</div><div class="name">Amman Stone</div></div><p class="role">Default background. The city's white limestone, kept cool.</p><button class="copy" type="button" data-copy="#F3F5F6">Copy hex</button></div>
+        <dl class="specs"><dt>HEX</dt><dd>#F3F5F6</dd><dt>RGB</dt><dd>243 · 245 · 246</dd><dt>CMYK</dt><dd>1 · 0 · 0 · 4</dd></dl>
+      </article>
+      <article class="swatch">
+        <div class="chip c-ink"><div><div class="name-ar" lang="ar" dir="rtl">بازلت</div><div class="name">Basalt</div></div><p class="role">Body text and dark backgrounds. The black stone of the north, with a navy cast.</p><button class="copy" type="button" data-copy="#131D2A">Copy hex</button></div>
+        <dl class="specs"><dt>HEX</dt><dd>#131D2A</dd><dt>RGB</dt><dd>19 · 29 · 42</dd><dt>CMYK</dt><dd>55 · 31 · 0 · 84</dd></dl>
+      </article>
+      <article class="swatch">
+        <div class="chip c-steel"><div><div class="name-ar" lang="ar" dir="rtl">رمادي القلعة</div><div class="name">Citadel Grey</div></div><p class="role">Secondary text, captions, fine rules. Stone in shadow.</p><button class="copy" type="button" data-copy="#5E6C7B">Copy hex</button></div>
+        <dl class="specs"><dt>HEX</dt><dd>#5E6C7B</dd><dt>RGB</dt><dd>94 · 108 · 123</dd><dt>CMYK</dt><dd>24 · 12 · 0 · 52</dd></dl>
+      </article>
+      <article class="swatch">
+        <div class="chip c-mist"><div><div class="name-ar" lang="ar" dir="rtl">ملح البحر الميت</div><div class="name">Dead Sea Salt</div></div><p class="role">Aqua tint for panels, tissue paper, web backgrounds.</p><button class="copy" type="button" data-copy="#E4F1F3">Copy hex</button></div>
+        <dl class="specs"><dt>HEX</dt><dd>#E4F1F3</dd><dt>RGB</dt><dd>228 · 241 · 243</dd><dt>CMYK</dt><dd>6 · 1 · 0 · 5</dd></dl>
+      </article>
+      <article class="swatch">
+        <div class="chip c-deep"><div><div class="name-ar" lang="ar" dir="rtl">فيروزي داكن</div><div class="name">Deep Aqua</div></div><p class="role">Aqua for text and links on light backgrounds. Passes AA.</p><button class="copy" type="button" data-copy="#2B6F7A">Copy hex</button></div>
+        <dl class="specs"><dt>HEX</dt><dd>#2B6F7A</dd><dt>RGB</dt><dd>43 · 111 · 122</dd><dt>CMYK</dt><dd>65 · 9 · 0 · 52</dd></dl>
+      </article>
+      <article class="swatch">
+        <div class="chip c-white"><div><div class="name-ar" lang="ar" dir="rtl">أبيض</div><div class="name">White</div></div><p class="role">Logo plates, hang-tag backs, product photo sweeps.</p><button class="copy" type="button" data-copy="#FFFFFF">Copy hex</button></div>
+        <dl class="specs"><dt>HEX</dt><dd>#FFFFFF</dd><dt>RGB</dt><dd>255 · 255 · 255</dd><dt>CMYK</dt><dd>0 · 0 · 0 · 0</dd></dl>
+      </article>
+    </div>
+
+    <div class="ratio">
+      <h3>Balance on a typical layout</h3>
+      <div class="ratio-bar" role="img" aria-label="Stone 55 percent, navy 25 percent, basalt 10 percent, white 5 percent, aqua 5 percent">
+        <span style="flex: 55; background: var(--lj-stone); color: var(--lj-ink)">Stone 55%</span>
+        <span style="flex: 25; background: var(--lj-navy); color: var(--lj-white)">Navy 25%</span>
+        <span style="flex: 10; background: var(--lj-ink); color: var(--lj-stone)">Basalt 10%</span>
+        <span style="flex: 5; background: var(--lj-white); color: var(--lj-ink)">5%</span>
+        <span style="flex: 5; background: var(--lj-aqua); color: var(--lj-ink)">5%</span>
+      </div>
+      <div class="ratio-legend"><span>The last two are white and aqua.</span><span>Once aqua covers more than about a tenth of the surface, it stops reading as a signature.</span></div>
+    </div>
+
+    <div class="block">
+      <h3>Text contrast</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Pair</th><th>Text on background</th><th>Ratio</th><th>Use</th></tr></thead>
+          <tbody>
+            <tr><td><span class="pair" style="background:#F3F5F6;color:#131D2A">Aa</span></td><td>Basalt on Amman Stone</td><td class="num">15.5 : 1</td><td><span class="verdict v-good">Body text</span></td></tr>
+            <tr><td><span class="pair" style="background:#F3F5F6;color:#2C4A6E">Aa</span></td><td>Navy on Amman Stone</td><td class="num">8.3 : 1</td><td><span class="verdict v-good">Body + headings</span></td></tr>
+            <tr><td><span class="pair" style="background:#2C4A6E;color:#FFFFFF">Aa</span></td><td>White on navy</td><td class="num">9.1 : 1</td><td><span class="verdict v-good">Body + headings</span></td></tr>
+            <tr><td><span class="pair" style="background:#131D2A;color:#7FBFC8">Aa</span></td><td>Aqaba Aqua on Basalt</td><td class="num">8.2 : 1</td><td><span class="verdict v-good">Body + headings</span></td></tr>
+            <tr><td><span class="pair" style="background:#F3F5F6;color:#2B6F7A">Aa</span></td><td>Deep Aqua on Amman Stone</td><td class="num">5.3 : 1</td><td><span class="verdict v-good">Links, small text</span></td></tr>
+            <tr><td><span class="pair" style="background:#F3F5F6;color:#5E6C7B">Aa</span></td><td>Citadel Grey on Amman Stone</td><td class="num">4.9 : 1</td><td><span class="verdict v-good">Captions</span></td></tr>
+            <tr><td><span class="pair" style="background:#2C4A6E;color:#7FBFC8">Aa</span></td><td>Aqaba Aqua on navy</td><td class="num">4.4 : 1</td><td><span class="verdict v-ok">Large text only</span></td></tr>
+            <tr><td><span class="pair" style="background:#FFFFFF;color:#7FBFC8">Aa</span></td><td>Aqaba Aqua on white</td><td class="num">2.1 : 1</td><td><span class="verdict v-no">Logo only, never text</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- TEXTURES -->
+  <section class="section" id="textures">
+    <header class="sec-head">
+      <div class="en"><span class="label">Textures</span><h2>Three places, drawn in brand colours</h2></div>
+      <div class="ar" lang="ar" dir="rtl"><span class="label-ar">الملامس</span><h2 class="h-ar">ثلاثة أماكن بألوان العلامة</h2></div>
+    </header>
+    <div class="intro">
+      <p>Jordan shows up as pattern rather than as souvenir imagery. Each texture is drawn from a real place and uses only the brand palette, so it sits next to the logo without competing with it.</p>
+    </div>
+    <div class="textures">
+      <figure class="texture">
+        <div class="swatch-t"><svg class="fill" aria-hidden="true"><rect width="100%" height="100%" fill="url(#pat-stone)"/></svg></div>
+        <figcaption class="cap" style="gap: var(--space-2)">
+          <span class="t-name"><span>Amman Stone</span><b lang="ar">حجر عمّان</b></span>
+          <p>The cut limestone courses on every building in Amman. Calm and orderly: the structure side of the brand.</p>
+          <span class="use"><b>Use:</b> tissue paper, website backgrounds, the shop's display wall.</span>
+        </figcaption>
+      </figure>
+      <figure class="texture">
+        <div class="swatch-t"><svg class="fill" aria-hidden="true"><rect width="100%" height="100%" fill="url(#pat-sea)"/></svg></div>
+        <figcaption class="cap" style="gap: var(--space-2)">
+          <span class="t-name"><span>Aqaba Sea</span><b lang="ar">بحر العقبة</b></span>
+          <p>The small, even waves of the Gulf of Aqaba. Light and fresh: the signature side of the brand.</p>
+          <span class="use"><b>Use:</b> inside of bags and boxes, summer drops, hang-tag backs.</span>
+        </figcaption>
+      </figure>
+      <figure class="texture">
+        <div class="swatch-t"><svg class="fill" aria-hidden="true"><use href="#rum" width="100%" height="100%"/></svg></div>
+        <figcaption class="cap" style="gap: var(--space-2)">
+          <span class="t-name"><span>Wadi Rum Night</span><b lang="ar">ليل وادي رم</b></span>
+          <p>The rounded jebels of Wadi Rum as contour lines under a clear night sky. One aqua star.</p>
+          <span class="use"><b>Use:</b> gift boxes, Instagram stories, evening and occasion campaigns.</span>
+        </figcaption>
+      </figure>
+    </div>
+    <div class="rules">
+      <div class="rule"><b>One texture per piece</b><span>Never mix two textures on the same bag, post or page.</span></div>
+      <div class="rule"><b>Logo on a calm field</b><span>Place the logo on plain colour, never directly on a texture.</span></div>
+      <div class="rule"><b>No new colours</b><span>Textures use only the palette. No sand, no gold, no red.</span></div>
+    </div>
+  </section>
+
+  <!-- TYPE -->
+  <section class="section" id="type">
+    <header class="sec-head">
+      <div class="en"><span class="label">Typography</span><h2>Square letters in both scripts</h2></div>
+      <div class="ar" lang="ar" dir="rtl"><span class="label-ar">الخطوط</span><h2 class="h-ar">حروف مربّعة باللغتين</h2></div>
+    </header>
+    <div class="intro">
+      <p>Four free Google fonts, two per language, with Arabic always set first and a little larger. The display faces echo the squared, rounded-corner LEADER letters. The text faces are a matched pair, so Arabic and English sit together at the same weight on a tag or a web page.</p>
+      <p>There is no script typeface. The only hand-written element in the brand is the Jo itself.</p>
+    </div>
+    <div class="fonts">
+      <article class="font-card">
+        <div class="meta"><b>Reem Kufi</b><span class="label">Display · Arabic</span></div>
+        <div class="spec f-reem" lang="ar" dir="rtl">أناقة</div>
+        <p>A geometric Kufi, the Arabic cousin of squared Latin letters. Headlines, campaign lines, product names. Weights 600–700.</p>
+      </article>
+      <article class="font-card">
+        <div class="meta"><b>Saira · Expanded</b><span class="label">Display · English</span></div>
+        <div class="spec f-saira">Aa 26</div>
+        <p>Squared bowls and soft corners, like the logo. Headings in capitals at 112–125% width, weights 600–700.</p>
+      </article>
+      <article class="font-card">
+        <div class="meta"><b>IBM Plex Sans Arabic</b><span class="label">Text · Arabic</span></div>
+        <div class="spec f-plex-ar" lang="ar" dir="rtl">قماش</div>
+        <p>Drawn as a partner to Plex Sans. Product copy, care labels, checkout. Weights 400, 500, 600.</p>
+      </article>
+      <article class="font-card">
+        <div class="meta"><b>IBM Plex Sans</b><span class="label">Text · English</span></div>
+        <div class="spec f-plex">Aa 26</div>
+        <p>The English partner. Use the same weight in both languages when they sit side by side.</p>
+      </article>
+    </div>
+
+    <div class="block">
+      <h3>Scale</h3>
+      <div class="table-wrap">
+        <table class="scale">
+          <thead><tr><th>Style</th><th lang="ar">العربية</th><th>English</th></tr></thead>
+          <tbody>
+            <tr><td><b>Display</b><br><span class="muted small">Ar 52 · En 44</span></td><td class="a-display" lang="ar" dir="rtl">وصل حديثاً</td><td class="s-display">New in</td></tr>
+            <tr><td><b>Heading 1</b><br><span class="muted small">Ar 38 · En 32</span></td><td class="a-h1" lang="ar" dir="rtl">خريف ٢٠٢٦</td><td class="s-h1">Autumn 26</td></tr>
+            <tr><td><b>Heading 2</b><br><span class="muted small">Ar 26 · En 22</span></td><td class="a-h2" lang="ar" dir="rtl">القميص الخارجي الكحلي</td><td class="s-h2">The navy overshirt</td></tr>
+            <tr><td><b>Body</b><br><span class="muted small">Ar 17/1.8 · En 16/1.6</span></td><td class="a-body" lang="ar" dir="rtl">قطن تويل ثقيل بقصّة مستقيمة وأزرار مخفية.</td><td class="s-body">Heavy cotton twill, cut straight, with a concealed placket.</td></tr>
+            <tr><td><b>Label</b><br><span class="muted small">Ar 13 · En 12 caps</span></td><td class="a-label" lang="ar" dir="rtl">المقاس · القصّة · العناية</td><td class="s-label">Size · Fit · Care</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted small">Arabic needs more size and line height than Latin to read at the same strength, so it always sets one step larger.</p>
+    </div>
+
+    <div class="block">
+      <h3>Numbers, prices and dates</h3>
+      <div class="numbers">
+        <div class="num-card"><span class="label">Price · Arabic</span><span class="big" lang="ar" dir="rtl">45.000 د.أ</span><span class="muted small">Western digits on tags and at checkout, so the price matches in both languages.</span></div>
+        <div class="num-card"><span class="label">Price · English</span><span class="big">JOD 45.000</span><span class="muted small">Dinars always show three decimals (fils), the way Jordanian receipts do.</span></div>
+        <div class="num-card"><span class="label">Seasons</span><span class="big">AW26 · SS27</span><span class="muted small">Arabic: خريف وشتاء ٢٠٢٦. Eastern digits are welcome in Arabic headlines and campaigns.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GRAPHICS -->
+  <section class="section" id="graphics">
+    <header class="sec-head">
+      <div class="en"><span class="label">Graphic language</span><h2>Corners and one stroke</h2></div>
+      <div class="ar" lang="ar" dir="rtl"><span class="label-ar">اللغة البصرية</span><h2 class="h-ar">الزاوية والخط</h2></div>
+    </header>
+    <div class="intro">
+      <p>Two small devices, both taken from the logo. They make a layout recognisable without repeating the logo everywhere.</p>
+    </div>
+    <div class="devices">
+      <div class="device">
+        <div class="corner-demo">
+          <div class="corner-card" dir="rtl"><span class="t" lang="ar">الحافة الأمامية</span><small lang="ar">العربية تُقرأ من اليمين إلى اليسار، فتُدوَّر الزوايا اليسرى.</small></div>
+          <div class="corner-card" dir="ltr"><span class="t">Leading edge</span><small>English reads left to right, so the right corners round.</small></div>
+        </div>
+        <h3>The leading corner</h3>
+        <p class="muted">The D and R in LEADER round the corners that face forward and keep the back corners square. Panels, buttons and tags do the same. Arabic layouts flip the rounding to the left, because Arabic reads toward the left.</p>
+      </div>
+      <div class="device">
+        <div class="sig-demo">
+          <span class="sig-word" lang="ar" dir="rtl">وصل حديثاً<svg viewBox="0 0 300 28" preserveAspectRatio="none" aria-hidden="true"><path d="M296 18C240 10 160 8 90 12C60 14 38 16 30 10C24 5 32 2 38 7C44 12 30 22 4 14"/></svg></span>
+        </div>
+        <h3>The signature stroke</h3>
+        <p class="muted">A single aqua line in the hand of the Jo, used to underline one word. One per layout, at most. It never becomes a pattern, a frame or a background.</p>
+      </div>
+    </div>
+    <div class="block">
+      <h3>Spacing</h3>
+      <div class="spacing" aria-label="Spacing scale in pixels">
+        <div><i style="width:4px;height:4px"></i>4</div>
+        <div><i style="width:8px;height:8px"></i>8</div>
+        <div><i style="width:12px;height:12px"></i>12</div>
+        <div><i style="width:16px;height:16px"></i>16</div>
+        <div><i style="width:24px;height:24px"></i>24</div>
+        <div><i style="width:32px;height:32px"></i>32</div>
+        <div><i style="width:48px;height:48px"></i>48</div>
+        <div><i style="width:72px;height:72px"></i>72</div>
+      </div>
+      <p class="muted small">An 8-point system with 4 and 12 for tight spots. Generous space is part of the look: when in doubt, take the next step up.</p>
+    </div>
+  </section>
+
+  <!-- PHOTOGRAPHY -->
+  <section class="section" id="photo">
+    <header class="sec-head">
+      <div class="en"><span class="label">Photography</span><h2>Real light, places we know</h2></div>
+      <div class="ar" lang="ar" dir="rtl"><span class="label-ar">التصوير</span><h2 class="h-ar">ضوء حقيقي وأماكن نعرفها</h2></div>
+    </header>
+    <div class="intro">
+      <p>The pictures should look like Jordan on a clear day: calm men and women in sharp clothes, photographed in places people here recognise. This is where the brand's warmth lives.</p>
+    </div>
+    <dl class="rows">
+      <div class="row"><dt>Places</dt><dd>Stone stairways in Jabal Amman and Weibdeh, the sandstone of Wadi Rum, the shore at Aqaba in the early morning, quiet courtyards.</dd><dd lang="ar" dir="rtl">أدراج جبل عمّان واللويبدة، صخور وادي رم، شاطئ العقبة صباحاً، أحواش هادئة.</dd></div>
+      <div class="row"><dt>Light</dt><dd>Hard daylight with real shadows. Late afternoon sun on limestone is the house light.</dd><dd lang="ar" dir="rtl">ضوء نهار حقيقي وظلال واضحة. شمس العصر على الحجر الأبيض.</dd></div>
+      <div class="row"><dt>People</dt><dd>Men and women styled as equals: same light, same framing, same respect. Upright, still, looking at the camera. Confidence without posing.</dd><dd lang="ar" dir="rtl">الرجال والنساء بالمكانة نفسها. وقفة ثابتة ونظرة مباشرة، ثقة بلا استعراض.</dd></div>
+      <div class="row"><dt>Casting</dt><dd>Jordan as it is: a range of ages, and women who wear hijab and women who don't. Show looks that work for modest dressers too.</dd><dd lang="ar" dir="rtl">الأردن كما هو: أعمار مختلفة، ومحجبات وغير محجبات، وإطلالات تناسب اللباس المحتشم.</dd></div>
+      <div class="row"><dt>Colour</dt><dd>True whites, cool shadows, natural skin. Navy and aqua arrive through clothes, sky and sea, never through a filter.</dd><dd lang="ar" dir="rtl">ألوان طبيعية. الكحلي والفيروزي يأتيان من الملابس والسماء والبحر، لا من الفلاتر.</dd></div>
+      <div class="row"><dt>Avoid</dt><dd>Camels-and-dunes clichés, studio cut-outs, heavy filters, stock-photo smiles, and the logo pasted on busy pictures.</dd><dd lang="ar" dir="rtl">لا صور سياحية مستهلكة، لا قصّ وخلفيات مصطنعة، لا فلاتر ثقيلة.</dd></div>
+    </dl>
+    <div class="block">
+      <h3>First shoot: four frames to get</h3>
+      <div class="shots">
+        <div class="shot"><svg class="fill" aria-hidden="true"><rect width="100%" height="100%" fill="url(#pat-stone)"/></svg><div class="txt on-light"><span class="ar" lang="ar">على الحجر</span><b>Portrait on stone</b><span>A man and a woman on a limestone stairway, afternoon sun.</span></div></div>
+        <div class="shot shot-detail"><div class="txt on-dark"><span class="ar" lang="ar">التفاصيل</span><b>The detail</b><span>Fabric, stitching and the woven label up close.</span></div></div>
+        <div class="shot"><svg class="fill" aria-hidden="true"><rect width="100%" height="100%" fill="url(#pat-sea)"/></svg><div class="txt on-light"><span class="ar" lang="ar">صباح العقبة</span><b>Aqaba morning</b><span>A navy piece against the water before 8 am.</span></div></div>
+        <div class="shot"><svg class="fill" aria-hidden="true"><use href="#rum" width="100%" height="100%"/></svg><div class="txt on-dark"><span class="ar" lang="ar">ليل رم</span><b>Rum at dusk</b><span>Evening looks in Wadi Rum as the light drops.</span></div></div>
+      </div>
+      <p class="muted small">Textured cards stand in for photographs, which come from the shoot.</p>
+    </div>
+  </section>
+
+  <!-- VOICE -->
+  <section class="section" id="voice">
+    <header class="sec-head">
+      <div class="en"><span class="label">Voice</span><h2>Speak like a leader: briefly</h2></div>
+      <div class="ar" lang="ar" dir="rtl"><span class="label-ar">النبرة</span><h2 class="h-ar">نتكلم كالقائد: باختصار</h2></div>
+    </header>
+    <div class="intro">
+      <p>Arabic comes first. Write each language natively and never translate word for word: English is the second version, not the original.</p>
+    </div>
+    <div class="voice-principles">
+      <div class="vp"><b>Short sentences</b><p>Say it once, in as few words as it takes. Let one strong line stand alone.</p></div>
+      <div class="vp"><b>Name the thing</b><p>The fabric, the cut, the fit. Specifics sound confident; adjectives sound nervous.</p></div>
+      <div class="vp"><b>Fuṣḥā for facts</b><p>Labels, product details and policies in clear Modern Standard Arabic. Social captions can borrow a little Jordanian dialect for warmth.</p></div>
+      <div class="vp"><b>For him and her</b><p>Arabic "you" is gendered. Shared posts use the plural or skip "you"; men's and women's posts use the matching form.</p></div>
+    </div>
+    <div class="block">
+      <h3>Examples</h3>
+      <div class="table-wrap">
+        <table class="voice">
+          <thead><tr><th>Where</th><th lang="ar">العربية</th><th>English</th></tr></thead>
+          <tbody>
+            <tr><td><b>Product</b></td><td lang="ar" dir="rtl">قميص خارجي كحلي. قطن تويل ثقيل بقصّة مستقيمة، لأمسيات تشرين في عمّان.</td><td>Navy overshirt. Heavy cotton twill, cut straight, made for October evenings in Amman.</td></tr>
+            <tr><td><b>New drop</b></td><td lang="ar" dir="rtl">وصل حديثاً. اثنتا عشرة قطعة للرجال والنساء، وقصة لون واحدة: الكحلي والحجري.</td><td>New in. Twelve pieces for men and women, one colour story: navy and stone.</td></tr>
+            <tr><td><b>Shop opening</b><br><span class="muted small">dialect</span></td><td lang="ar" dir="rtl">نوّرتونا بالافتتاح. عمّان كلها كانت هون.</td><td>Thank you for coming to the opening. All of Amman showed up.</td></tr>
+            <tr><td><b>Sale</b></td><td lang="ar" dir="rtl">خصم 30% على القطع الأخيرة. وما ينفد لا يعود.</td><td>Final pieces at 30% off. When they're gone, they're gone.</td></tr>
+            <tr><td><b>Order update</b></td><td lang="ar" dir="rtl">طلبكم جاهز وفي الطريق إليكم.</td><td>Your order is packed and on its way.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted small">The Arabic lines are drafts written for tone. A native copywriter should review them before use.</p>
+    </div>
+    <div class="dodont">
+      <div class="dd"><span class="verdict v-good">Do</span><q lang="ar" dir="rtl">قميص كحلي. تويل ثقيل. قصّة مستقيمة.</q><q>Navy overshirt. Heavy twill. Cut straight.</q></div>
+      <div class="dd"><span class="verdict v-no">Don't</span><q lang="ar" dir="rtl">!!!تألّق مع تشكيلتنا الجديدة المذهلة</q><q>Elevate your style with our AMAZING new collection!!!</q></div>
+    </div>
+  </section>
+
+  <!-- APPLICATIONS -->
+  <section class="section" id="applications">
+    <header class="sec-head">
+      <div class="en"><span class="label">Applications</span><h2>First touchpoints</h2></div>
+      <div class="ar" lang="ar" dir="rtl"><span class="label-ar">التطبيقات</span><h2 class="h-ar">أول ما يلمسه العميل</h2></div>
+    </header>
+    <div class="intro">
+      <p>These are the pieces a customer meets first. They are layout studies to brief a label maker, printer or designer; final sizes come from each supplier's specs.</p>
+    </div>
+    <div class="apps">
+      <figure class="app">
+        <div class="stage">
+          <div class="neck">
+            <svg class="logo" viewBox="-8 -8 808 196" aria-label="Leader Jo" role="img"><use href="#lj-logo"/></svg>
+            <span class="origin"><span lang="ar" dir="rtl">عمّان · الأردن</span><span>Amman · Jordan</span></span>
+          </div>
+        </div>
+        <figcaption class="cap"><b>Woven neck label.</b> Navy damask, white LEADER, aqua Jo, aqua end-fold stitching, place line in both languages. About 50 × 20 mm.</figcaption>
+      </figure>
+      <figure class="app">
+        <div class="stage">
+          <div class="tags">
+            <div class="tag tag-front">
+              <svg class="fill" aria-hidden="true" style="opacity:.55"><use href="#rum" width="100%" height="100%"/></svg>
+              <svg class="jo" viewBox="669 60 130 124" aria-hidden="true"><use href="#lj-jo"/></svg>
+              <svg class="small-word" viewBox="-8 -8 690 116" aria-label="Leader" role="img"><use href="#lj-word"/></svg>
+            </div>
+            <div class="tag tag-back">
+              <span class="item-ar" lang="ar" dir="rtl">قميص خارجي</span>
+              <span class="item">Overshirt</span>
+              <span class="kv"><span lang="ar">المقاس · Size</span><b>M · 48</b></span>
+              <span class="kv"><span lang="ar">اللون · Colour</span><b>Navy</b></span>
+              <span class="kv"><span>Ref.</span><b>LJ-AW26-014</b></span>
+              <span class="price-ar" lang="ar" dir="rtl">45.000 د.أ</span>
+              <span class="price">JOD 45.000</span>
+              <div class="barcode" aria-hidden="true"></div>
+            </div>
+          </div>
+        </div>
+        <figcaption class="cap"><b>Hang tag, front and back.</b> Signature mark over a soft Wadi Rum texture; Arabic first on the back. Example item and price.</figcaption>
+      </figure>
+      <figure class="app">
+        <div class="stage">
+          <div class="bag-wrap">
+            <div class="bag-handle"></div>
+            <div class="bag">
+              <svg class="logo" viewBox="-8 -8 808 196" aria-label="Leader Jo" role="img"><use href="#lj-logo"/></svg>
+              <div class="foot"><span lang="ar" dir="rtl">ليدر جو · عمّان</span><span>Amman</span></div>
+              <svg class="band" width="100%" height="64" aria-hidden="true"><rect width="100%" height="100%" fill="url(#pat-sea)"/></svg>
+            </div>
+          </div>
+        </div>
+        <figcaption class="cap"><b>Shopping bag.</b> Stone-white board, navy logo, Aqaba wave band along the base, aqua rope handles.</figcaption>
+      </figure>
+      <figure class="app">
+        <div class="stage">
+          <div class="ig">
+            <div class="ig-head">
+              <div class="avatar"><svg viewBox="669 60 130 124" aria-hidden="true"><use href="#lj-jo"/></svg></div>
+              <div><b>leaderjo</b><span lang="ar" dir="rtl">أزياء للرجال والنساء · عمّان</span></div>
+            </div>
+            <div class="ig-grid">
+              <div class="t1" lang="ar"><span>وصل حديثاً<small>AW26 · NEW IN</small></span></div>
+              <div class="t2" lang="ar" dir="rtl">هيبة<br>بلا ضجيج</div>
+              <div class="t3"><svg viewBox="669 60 130 124" aria-hidden="true"><use href="#lj-jo"/></svg></div>
+              <div class="t4"><svg class="fill" aria-hidden="true"><rect width="100%" height="100%" fill="url(#pat-stone)"/></svg><span class="over" lang="ar">على الحجر</span></div>
+              <div class="t5" lang="ar"><span><strong>30%</strong>القطع الأخيرة</span></div>
+              <div class="t6"><svg class="fill" aria-hidden="true"><use href="#rum" width="100%" height="100%"/></svg><span class="over" lang="ar">ليل رم</span></div>
+            </div>
+          </div>
+        </div>
+        <figcaption class="cap"><b>Instagram.</b> Signature mark as the profile picture; Arabic-first type posts and textures between product photos. The handle is a placeholder.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- TOKENS -->
+  <section class="section" id="tokens">
+    <header class="sec-head">
+      <div class="en"><span class="label">Tokens</span><h2>For the website</h2></div>
+      <div class="ar" lang="ar" dir="rtl"><span class="label-ar">المتغيرات</span><h2 class="h-ar">للموقع الإلكتروني</h2></div>
+    </header>
+    <div class="intro">
+      <p>Paste this into the website's stylesheet so every page uses the same colours, fonts and spacing.</p>
+    </div>
+    <div class="code">
+      <button class="copy" type="button" data-copy-target="tokens-src">Copy CSS</button>
+<pre id="tokens-src"><span class="c">/* Leader Jo · brand tokens · draft 0.2 */</span>
+<span class="k">:root</span> {
+  <span class="c">/* Colour */</span>
+  --lj-navy: #2C4A6E;       <span class="c">/* Wadi Rum Night (logo navy) */</span>
+  --lj-aqua: #7FBFC8;       <span class="c">/* Aqaba Aqua (logo Jo) */</span>
+  --lj-stone: #F3F5F6;      <span class="c">/* Amman Stone */</span>
+  --lj-ink: #131D2A;        <span class="c">/* Basalt */</span>
+  --lj-steel: #5E6C7B;      <span class="c">/* Citadel Grey */</span>
+  --lj-mist: #E4F1F3;       <span class="c">/* Dead Sea Salt */</span>
+  --lj-aqua-deep: #2B6F7A;  <span class="c">/* Deep Aqua, text-safe */</span>
+
+  <span class="c">/* Type: Arabic first */</span>
+  --lj-font-ar-display: "Reem Kufi", "Noto Kufi Arabic", sans-serif;
+  --lj-font-ar-text: "IBM Plex Sans Arabic", "Noto Sans Arabic", sans-serif;
+  --lj-font-display: "Saira", "Eurostile", sans-serif;
+  --lj-font-text: "IBM Plex Sans", system-ui, sans-serif;
+
+  <span class="c">/* Shape + space */</span>
+  --lj-radius-lead: 14px;   <span class="c">/* leading corners only */</span>
+  --lj-space-1: 4px;  --lj-space-2: 8px;  --lj-space-3: 12px; --lj-space-4: 16px;
+  --lj-space-5: 24px; --lj-space-6: 32px; --lj-space-7: 48px; --lj-space-8: 72px;
+}</pre>
+    </div>
+  </section>
+
+  <!-- NEXT -->
+  <section class="section" id="next">
+    <header class="sec-head">
+      <div class="en"><span class="label">Next steps</span><h2>What I need from you</h2></div>
+      <div class="ar" lang="ar" dir="rtl"><span class="label-ar">الخطوات التالية</span><h2 class="h-ar">ما أحتاجه منك</h2></div>
+    </header>
+    <div class="block">
+      <h3>Decided</h3>
+      <div class="decided">
+        <span><b>Logo:</b> kept exactly as is</span>
+        <span><b>Mood:</b> rooted in Jordan, Arabic first</span>
+        <span><b>Audience:</b> men and women</span>
+        <span><b>Colours:</b> navy + aqua only</span>
+      </div>
+    </div>
+    <div class="block">
+      <h3>Still open</h3>
+      <div class="asks">
+        <div class="ask"><span class="box" aria-hidden="true"></span><div><b>The master logo file</b><p>AI, SVG or PDF from the designer, so the redrawn stand-in and the sampled colours can be swapped for the exact ones.</p></div></div>
+        <div class="ask"><span class="box" aria-hidden="true"></span><div><b>The Arabic name</b><p>Is ليدر جو the spelling you want next to the logo on Arabic signage and packaging?</p></div></div>
+        <div class="ask"><span class="box" aria-hidden="true"></span><div><b>The brand line</b><p>Keep هيبة بلا ضجيج · Presence, without noise, or explore other lines.</p></div></div>
+        <div class="ask"><span class="box" aria-hidden="true"></span><div><b>Price range and first collection</b><p>Rough price range and the first pieces, so the tags, packaging and voice match the product.</p></div></div>
+        <div class="ask"><span class="box" aria-hidden="true"></span><div><b>Channels and production</b><p>Instagram handle, website, physical shop or online only, and where the clothes are made, so labels say the right thing.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Leader Jo · Brand system · Draft 0.2</span>
+    <span lang="ar" dir="rtl">ليدر جو · عمّان، الأردن</span>
+  </footer>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script>
+(function () {
+  var toast = document.getElementById('toast');
+  var timer;
+  function show(msg) {
+    toast.textContent = msg;
+    toast.hidden = false;
+    clearTimeout(timer);
+    timer = setTimeout(function () { toast.hidden = true; }, 1800);
+  }
+  function selectText(el) {
+    var range = document.createRange();
+    range.selectNodeContents(el);
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('.copy');
+    if (!btn) return;
+    var targetId = btn.getAttribute('data-copy-target');
+    var el = targetId ? document.getElementById(targetId) : null;
+    var text = el ? el.textContent : btn.getAttribute('data-copy');
+    var label = el ? 'CSS' : text;
+    var done = function () { show('Copied ' + label); };
+    var fail = function () {
+      if (el) { selectText(el); show('Selected. Press Ctrl+C or Cmd+C to copy'); }
+      else { show(text + ' (copy it by hand)'); }
+    };
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, fail);
+      } else { fail(); }
+    } catch (err) { fail(); }
+  });
+})();
+</script>
