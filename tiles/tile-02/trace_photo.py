@@ -13,14 +13,15 @@ are generated from it. The central star is constructed (12 right-angled points).
 Usage:  python3 trace_photo.py PHOTO.jpg OUT_DIR
 Needs:  numpy, Pillow
 """
-import json
 import math
 import sys
-from collections import deque
 from pathlib import Path
 
 import numpy as np
 from PIL import Image, ImageDraw
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from vectorize import label, straight_polygon, trace  # noqa: E402
 
 N = 1000                 # working grid: 1000 px = 500 mm panel
 C = N / 2
@@ -57,163 +58,6 @@ def green_mask(img):
     g[:, :pad] = g[:, pad:pad + 1]; g[:, -pad:] = g[:, -pad - 1:-pad]
     g[:pad, :] = g[pad:pad + 1, :]; g[-pad:, :] = g[-pad - 1:-pad, :]
     return g > 0.5
-
-
-def label(m):
-    lab = np.zeros(m.shape, np.int32)
-    n = 0
-    for i0, j0 in zip(*np.nonzero(m)):
-        if lab[i0, j0]:
-            continue
-        n += 1
-        lab[i0, j0] = n
-        q = deque([(i0, j0)])
-        while q:
-            i, j = q.popleft()
-            for a, b in ((i + 1, j), (i - 1, j), (i, j + 1), (i, j - 1)):
-                if 0 <= a < N and 0 <= b < N and m[a, b] and not lab[a, b]:
-                    lab[a, b] = n
-                    q.append((a, b))
-    return lab, n
-
-
-def trace(comp):
-    """Outer boundary of a 4-connected component as pixel-corner points (crack following)."""
-    ys, xs = np.nonzero(comp)
-    i0 = ys.min()
-    j0 = xs[ys == i0].min()
-
-    def inside(px, py):
-        return 0 <= px < N and 0 <= py < N and comp[py, px]
-
-    p, d = (j0, i0), (1, 0)
-    start, pts = (p, d), []
-    while True:
-        pts.append(p)
-        q = (p[0] + d[0], p[1] + d[1])
-        right, left = (-d[1], d[0]), (d[1], -d[0])
-        ahead_r = (math.floor(q[0] + d[0] / 2 + right[0] / 2), math.floor(q[1] + d[1] / 2 + right[1] / 2))
-        ahead_l = (math.floor(q[0] + d[0] / 2 + left[0] / 2), math.floor(q[1] + d[1] / 2 + left[1] / 2))
-        if not inside(*ahead_r):
-            d = right
-        elif inside(*ahead_l):
-            d = left
-        p = q
-        if (p, d) == start:
-            return np.array(pts, float)
-
-
-# ------------------------------------------------------------------ contour -> straight polygon
-def douglas_peucker(pts, eps):
-    keep = {0, len(pts) - 1}
-    stack = [(0, len(pts) - 1)]
-    while stack:
-        a, b = stack.pop()
-        if b <= a + 1:
-            continue
-        p, v = pts[a], pts[b] - pts[a]
-        L = max(np.hypot(*v), 1e-9)
-        seg = pts[a + 1:b]
-        dist = np.abs(v[0] * (seg[:, 1] - p[1]) - v[1] * (seg[:, 0] - p[0])) / L
-        k = int(np.argmax(dist))
-        if dist[k] > eps:
-            m = a + 1 + k
-            keep.add(m)
-            stack += [(a, m), (m, b)]
-    return sorted(keep)
-
-
-def corner_indices(contour, eps=2.5):
-    far = int(np.argmax(np.hypot(*(contour - contour[0]).T)))
-    a = list(range(0, far + 1))
-    b = list(range(far, len(contour))) + [0]
-    idx = [a[k] for k in douglas_peucker(contour[a], eps)] + [b[k] for k in douglas_peucker(contour[b], eps)[1:-1]]
-    return sorted(set(idx))
-
-
-def snap_dir(u):
-    ang = math.degrees(math.atan2(u[1], u[0])) % 180
-    r = math.radians(round(ang / SNAP) * SNAP % 180)
-    return np.array([math.cos(r), math.sin(r)])
-
-
-def intersect(l1, l2):
-    (p, u), (q, v) = l1, l2
-    den = u[0] * v[1] - u[1] * v[0]
-    if abs(den) < 1e-6:
-        return None
-    t = ((q[0] - p[0]) * v[1] - (q[1] - p[1]) * v[0]) / den
-    return p + t * u
-
-
-def merge_parallel(lines):
-    changed = True
-    while changed and len(lines) > 3:
-        changed = False
-        for i in range(len(lines)):
-            j = (i + 1) % len(lines)
-            if abs(lines[i][1][0] * lines[j][1][1] - lines[i][1][1] * lines[j][1][0]) < 1e-6:
-                c1, u1, s1, b1, d1 = lines[i]; c2, u2, s2, b2, d2 = lines[j]
-                lines[i] = [(c1 * s1 + c2 * s2) / (s1 + s2), u1, s1 + s2, b1 or b2, d1 + d2]
-                del lines[j]
-                changed = True
-                break
-
-
-def edge_lines(contour):
-    """One straight line per contour run: (point, unit dir snapped to 15 deg, length, on_border)."""
-    idx = corner_indices(contour)
-    n = len(contour)
-    lines = []
-    for k in range(len(idx)):
-        a, b = idx[k], idx[(k + 1) % len(idx)]
-        span = (b - a) % n
-        seg = np.array([contour[(a + t) % n] for t in range(span + 1)])
-        core = seg[2:len(seg) - 2] if span > 10 else seg
-        c = core.mean(axis=0)
-        u = snap_dir(np.linalg.svd(core - c)[2][0])
-        border = False
-        if np.all(np.abs(seg[:, 0]) < 0.5) or np.all(np.abs(seg[:, 0] - N) < 0.5):
-            c, u, border = np.array([seg[0, 0], 0.0]), np.array([0.0, 1.0]), True
-        if np.all(np.abs(seg[:, 1]) < 0.5) or np.all(np.abs(seg[:, 1] - N) < 0.5):
-            c, u, border = np.array([0.0, seg[0, 1]]), np.array([1.0, 0.0]), True
-        lines.append([c, u, float(span), border, seg[-1] - seg[0]])
-    merge_parallel(lines)
-    return lines
-
-
-def vertices(lines):
-    out = []
-    for k in range(len(lines)):
-        p = intersect((lines[k - 1][0], lines[k - 1][1]), (lines[k][0], lines[k][1]))
-        out.append(p if p is not None else lines[k][0])
-    return np.array(out)
-
-
-def straight_polygon(contour, tol=4.0):
-    """Polygon of 15-degree edges; edges that create spikes away from the outline are dropped."""
-    lines = edge_lines(contour)
-    while len(lines) > 3:
-        poly = vertices(lines)
-        dist = np.array([0.0 if (lines[i - 1][3] or lines[i][3]) else np.min(np.hypot(*(contour - v).T))
-                         for i, v in enumerate(poly)])
-        k = int(np.argmax(dist))
-        if dist[k] > tol:
-            a, b = (k - 1) % len(lines), k
-            del lines[a if lines[a][2] < lines[b][2] else b]
-            merge_parallel(lines)
-            continue
-        # tiny edges (< 3 px) and edges running backwards against the outline are corner
-        # noise: let their neighbours meet directly
-        vec = np.roll(poly, -1, axis=0) - poly
-        edge = np.hypot(*vec.T)
-        tiny = [i for i in range(len(lines))
-                if not lines[i][3] and (edge[i] < 3 or vec[i] @ lines[i][4] < 0)]
-        if not tiny:
-            return poly
-        del lines[tiny[0]]
-        merge_parallel(lines)
-    return vertices(lines)
 
 
 # ------------------------------------------------------------------ symmetry
@@ -370,7 +214,7 @@ def trace_pieces(mask):
             sizes = [(lab == i).sum() for i in range(1, n + 1)]
             comp = lab == (1 + int(np.argmax(sizes)))
         els, kind = t["els"], t["kind"]
-        poly = straight_polygon(trace(comp))
+        poly = straight_polygon(trace(comp), SNAP, size=N)
         for g in els:
             if np.linalg.det(g) < 0 and np.hypot(*(apply(g, [cen])[0] - cen)) < 12:
                 poly = symmetrise(poly, g, comp)
