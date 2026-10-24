@@ -7,7 +7,7 @@ The goal is that every product image looks like it was taken by a real food phot
 - **Hero:** one product, front-on at eye level or slightly low, with the bun leaning toward the camera and fillings visible at the edges.
 - **Light:** warm and directional from back-left, with a soft white bounce from the front. Highlights glint on the bun and sauce. Never use cold daylight or flat, even light.
 - **Surface:** a worn dark walnut board or a sheet of cream deli paper on a wooden counter.
-- **Background:** a blurred warm diner interior with red and cream tones and a hint of brick. For cut-outs, use plain cream `#FFF5E1`. Never use pure white or black.
+- **Background:** a blurred warm saloon interior with wood, brick and warm lamps. **Menu images are always cut-outs**, generated on plain parchment `#F3E6CC` and then cut out with no background. Never use pure white or black.
 - **Crop:** 1:1 for menu cards and 4:5 for Instagram. Leave 15% clear above the bun for stickers.
 - **Honesty:** portion size, bun and fillings must match what the kitchen actually serves. If the photo promises more than arrives, the photo is wrong.
 
@@ -209,10 +209,18 @@ Subject: seven small paper sauce cups in a row, overhead: orange-red Texas sauce
 
 ### Variants
 
-- **Cut-out for flyers:** add `Plain seamless cream background (#FFF5E1), soft contact shadow, no props.`
+- **Cut-out for the menu (default):** add `Plain seamless parchment background (#F3E6CC), no props, no shadow on the background, sharp clean edges all around the food, so it can be cut out cleanly.`
 - **Hand-held:** add `Two real human hands holding it toward the camera, fingers gently pressing the bun, black t-shirt sleeve visible, natural skin texture, face not visible.`
 - **Instagram 4:5:** add `Vertical 4:5 framing, 15% empty space above the food for text.`
 - **Texas chapter:** add `Warm sunset-rust rim light, a coil of rope and a small cast-iron skillet blurred in the background.`
+
+## Cut-outs and the floor shadow
+
+- Every product on the online menu is a **cut-out with no background**. Generate it on plain parchment, remove the background and save a transparent WebP.
+- Clean the edge: no soft halo, no leftover shadow baked into the cut-out.
+- Add **one oval floor shadow underneath the sandwich** in the layout. It is an ellipse about 80% of the sandwich width and 16px tall, using a radial gradient from `floor` to transparent, sitting just under the bottom bun.
+- Never use `drop-shadow` around the whole outline. It makes the sandwich look like it is floating.
+- Cleaned versions of the current cut-outs are `beef-burger-cutout-clean.webp` and `chicken-burger-cutout-clean.webp`.
 
 ## Current images in this system
 
@@ -220,12 +228,12 @@ The photos under `assets/Photography/` were extracted from the print menu and fl
 
 ## Stickers and badges
 
-- Stickers are rotated rectangles at -4° to 4°, in `ketchup` or `mustard`, with Alfa Slab One uppercase text and `shadow-sign`. Examples: "100% FRESH BEEF" and "CRISPY CHICKEN".
-- The round stamp ("EVERY SANDWICH WITH FRIES") is a `radius-pill` disc in `ink` with a cream ring.
+- Stickers are small wooden planks or brass-edged tags in `green` or `red`, with Rye text. Examples: "100% Fresh Beef" and "Crispy Chicken".
+- The round stamp ("Every sandwich with fries") is a `radius-round` disc in `red` with a dashed `on-red` ring, like a sheriff's seal.
 - Use at most two stickers per image. Add them in design, never in the AI prompt.
 
 ## Patterns
 
-- **Checkerboard:** 16px squares in `ink` on `surface-200`. Use it as a 32px-high border band at the top or bottom of a page, never as a full background.
-- **Star rule:** ★ ── ★ ── ★ in `mustard` on dark bands and `ketchup-deep` on cream.
+- **Checkerboard:** 16px `green` squares on `surface-100`, as one 16px-high strip under the poster and above the footer. Never use it as a full background.
+- **Star rule:** ★ ── ★ ── ★ in `gold`.
 - **Five-star row** from the crest: use it under headlines.

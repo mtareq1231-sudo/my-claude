@@ -1,0 +1,75 @@
+{
+  "name": "Enzo Grill House",
+  "version": 2,
+  "color": {
+    "themes": [{"id": "light", "name": "Light"}, {"id": "dark", "name": "Dark"}],
+    "tokens": [
+      {"name": "red", "value": {"light": "#a51f1b", "dark": "#b82a24"}, "usage": "Chili red fill: Single price chip, active category tab, primary button, the top strip. Text on it is `on-red` (6.4:1 light, 5.3:1 dark)."},
+      {"name": "red-text", "value": {"light": "#a51f1b", "dark": "#ef6b5a"}, "usage": "Red text on `surface-100` and `surface-200`: the Signature and Spicy labels, poster eyebrow and big fries prices. 6:1 in both themes."},
+      {"name": "on-red", "value": {"light": "#f7ecd6", "dark": "#f7ecd6"}, "usage": "Text and icons on `red`."},
+      {"name": "green", "value": {"light": "#1f4a32", "dark": "#2a5a3e"}, "usage": "Ranch green fill: wooden plank section signs, the category strap, the footer, the poster frame and the checkerboard squares. Text on it is `on-green`."},
+      {"name": "green-text", "value": {"light": "#2a6b45", "dark": "#6fbf8c"}, "usage": "Green text on `surface-100`: the 'With fries' line, the Grilled label and small eyebrows. 5.2:1 light and 8.3:1 dark."},
+      {"name": "on-green", "value": {"light": "#f7ecd6", "dark": "#f7ecd6"}, "usage": "Text on `green` (8.6:1 light, 6.8:1 dark)."},
+      {"name": "gold", "value": {"light": "#d99a2b", "dark": "#e8b04a"}, "usage": "Brass accent only: plank nails, ★ stars and the plank kicker text. Never a background for text, and never more than a few marks per screen."},
+      {"name": "on-gold", "value": {"light": "#231a14", "dark": "#231a14"}, "usage": "Text on `gold` on the rare gold button (the footer 'Copy number')."},
+      {"name": "surface-100", "value": {"light": "#f3e6cc", "dark": "#1b130e"}, "usage": "Parchment page background. In dark mode it becomes a night-time saloon brown, never pure black."},
+      {"name": "surface-200", "value": {"light": "#e9d5ad", "dark": "#261a13"}, "usage": "Deeper parchment: the wanted-poster panel and occasional bands."},
+      {"name": "ink", "value": {"light": "#231a14", "dark": "#f3e6cc"}, "usage": "Item names and body text on `surface-100` and `surface-200` (14:1 or better)."},
+      {"name": "ink-muted", "value": {"light": "#6a5442", "dark": "#c4ab8c"}, "usage": "Italic ingredient lines and captions on `surface-100` (6:1 light, 8.7:1 dark)."},
+      {"name": "rope", "value": {"light": "#b08a5a", "dark": "#6b5039"}, "usage": "Dashed dividers between menu items and around the chapter ticket. Decorative only."},
+      {"name": "floor", "value": {"light": "rgba(20, 14, 10, 0.45)", "dark": "rgba(0, 0, 0, 0.85)"}, "usage": "Centre colour of the oval floor shadow under a cut-out sandwich (radial gradient to transparent). Nothing else."},
+      {"name": "focus", "value": {"light": "#1e5aa8", "dark": "#7fb0f0"}, "usage": "Keyboard focus ring: a 3px solid outline with a 2px offset on every control."}
+    ]
+  },
+  "type": {
+    "fonts": [],
+    "families": {
+      "display": "Rye, \"Alfa Slab One\", Georgia, serif",
+      "slab": "\"Zilla Slab\", Rockwell, Georgia, serif",
+      "body": "Lora, Georgia, \"Times New Roman\", serif",
+      "arabic-display": "\"Reem Kufi\", Tajawal, sans-serif",
+      "arabic-body": "Tajawal, system-ui, sans-serif"
+    },
+    "groups": [
+      {"name": "Display", "family": "display", "styles": [
+        {"name": "hero", "fontSize": "48px", "lineHeight": "52px", "fontWeight": 400, "sample": "More than a sandwich.", "usage": "The poster headline, once per page."},
+        {"name": "plank", "fontSize": "30px", "lineHeight": "34px", "fontWeight": 400, "sample": "Burgers", "usage": "Section titles on the green planks, in title case and never uppercase (Rye is already loud)."},
+        {"name": "chapter", "fontSize": "24px", "lineHeight": "30px", "fontWeight": 400, "sample": "Stop 01 · Texas", "usage": "The chapter ticket and footer slogan."}
+      ]},
+      {"name": "Menu", "family": "slab", "styles": [
+        {"name": "item-name", "fontSize": "21px", "lineHeight": "26px", "fontWeight": 700, "letterSpacing": "0.03em", "sample": "THE ORIGINAL", "usage": "Item names, in uppercase and `ink`."},
+        {"name": "price", "fontSize": "22px", "lineHeight": "24px", "fontWeight": 700, "sample": "160", "usage": "Numbers inside price chips, with tabular figures."},
+        {"name": "label", "fontSize": "12px", "lineHeight": "16px", "fontWeight": 700, "letterSpacing": "0.18em", "sample": "WITH FRIES", "usage": "Uppercase eyebrows, tab labels, chip labels (SINGLE / DOUBLE) and badges."}
+      ]},
+      {"name": "Text", "family": "body", "styles": [
+        {"name": "ingredients", "fontSize": "15px", "lineHeight": "22px", "fontWeight": 400, "fontStyle": "italic", "sample": "Beef patty, lettuce, tomato, onion, pickles, mayo & ketchup", "usage": "Ingredient lines in italic `ink-muted`, like handwritten saloon menus."},
+        {"name": "body", "fontSize": "16px", "lineHeight": "24px", "fontWeight": 400, "sample": "Chef Enzo is roaming America hunting for bold new recipes.", "usage": "Running text."},
+        {"name": "caption", "fontSize": "13px", "lineHeight": "18px", "fontWeight": 400, "fontStyle": "italic", "sample": "Prices in EGP. Every sandwich comes with fries.", "usage": "Footnotes and the footer fine print."}
+      ]},
+      {"name": "Arabic", "family": "arabic-body", "styles": [
+        {"name": "ar-display", "family": "arabic-display", "fontSize": "36px", "lineHeight": "52px", "fontWeight": 700, "sample": "أكتر من ساندوتش.", "usage": "Arabic counterpart of `hero`, `plank` and `chapter`."},
+        {"name": "ar-item", "fontSize": "20px", "lineHeight": "28px", "fontWeight": 800, "sample": "الأوريجينال", "usage": "Arabic item names."},
+        {"name": "ar-body", "fontSize": "15px", "lineHeight": "26px", "fontWeight": 500, "sample": "برجر لحمة بقري، خس، طماطم، بصل، مخلل، مايونيز وكاتشب", "usage": "Arabic ingredients, upright (Arabic has no italic)."}
+      ]}
+    ]
+  },
+  "spacing": {"tokens": [
+    {"name": "space-1", "value": "4px", "usage": "Gaps inside chips and badges."},
+    {"name": "space-2", "value": "8px", "usage": "Gap between price chips and tabs."},
+    {"name": "space-3", "value": "12px", "usage": "Plank padding and chapter ticket padding."},
+    {"name": "space-4", "value": "16px", "usage": "Phone gutter and checker square size."},
+    {"name": "space-6", "value": "24px", "usage": "Item vertical rhythm."},
+    {"name": "space-10", "value": "40px", "usage": "Space above each section plank."}
+  ]},
+  "radius": {"tokens": [
+    {"name": "radius-sm", "value": "4px", "usage": "Price chips, tabs, buttons and the poster corners. Saloon signage is square-cut."},
+    {"name": "radius-plank", "value": "3px", "usage": "Wooden plank section signs."},
+    {"name": "radius-pill", "value": "999px", "usage": "The EN / ع language toggle and sauce chips only."},
+    {"name": "radius-round", "value": "50%", "usage": "The chapter badge medallion."}
+  ]},
+  "shadow": {"tokens": [
+    {"name": "shadow-plank", "value": "0 4px 0 rgba(0, 0, 0, 0.25)", "usage": "Under each wooden plank, so it reads as a board nailed to the wall."},
+    {"name": "shadow-tab", "value": "2px 2px 0 rgba(0, 0, 0, 0.35)", "usage": "The active red tab on the green strap."},
+    {"name": "shadow-strap", "value": "0 3px 0 #b08a5a", "usage": "Rope-coloured edge under the sticky category strap."}
+  ]}
+}
