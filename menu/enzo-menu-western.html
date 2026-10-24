@@ -51,7 +51,8 @@ body.ar .hero h1 { font-family: var(--font-ar-display); font-weight: 700; line-h
 .hero-meta { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 12px; margin-top: 10px; font-family: var(--font-slab); font-weight: 700; font-size: 14px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-muted); }
 body.ar .hero-meta { font-family: var(--font-ar-body); letter-spacing: 0; text-transform: none; font-size: 15px; }
 .stars { color: var(--gold); }
-.checker { height: 10px; margin-top: 16px; background: repeating-linear-gradient(135deg, var(--rope) 0 6px, transparent 6px 12px); border-block: 1.5px solid var(--rope); }
+.checker { height: 16px; margin-top: 16px; background-color: var(--paper); background-image: conic-gradient(var(--green) 25%, transparent 0 50%, var(--green) 0 75%, transparent 0); background-size: 16px 16px; }
+.checker.full { margin-top: 0; }
 
 /* Chapter: a torn ticket */
 .chapter { margin-top: 18px; display: flex; gap: 14px; align-items: center; padding: 12px 0; border-block: 2px dashed var(--rope); }
@@ -106,14 +107,15 @@ body.ar .aside { font-style: normal; font-family: var(--font-ar-display); }
 .cutwrap { position: relative; display: block; width: 132px; padding-bottom: 10px; }
 .cutwrap::after { content: ""; position: absolute; left: 10%; right: 10%; bottom: 2px; height: 16px; border-radius: 50%; background: radial-gradient(closest-side, var(--floor), transparent); z-index: 0; }
 .cut { position: relative; z-index: 1; width: 100%; height: auto; display: block; }
-.line { display: flex; align-items: baseline; gap: 8px; }
+.line { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
 .item h3 { margin: 0; overflow-wrap: anywhere; font-family: var(--font-slab); font-weight: 700; font-size: 21px; line-height: 26px; letter-spacing: .03em; text-transform: uppercase; min-width: 0; }
 body.ar .item h3 { font-family: var(--font-ar-body); font-weight: 800; font-size: 20px; letter-spacing: 0; text-transform: none; }
-.lead { flex: 1; min-width: 16px; border-bottom: 2px dotted var(--ink-muted); transform: translateY(-5px); }
-.prices { display: flex; align-items: baseline; gap: 6px; flex: none; font-family: var(--font-slab); font-weight: 700; font-size: 22px; font-variant-numeric: tabular-nums; color: var(--red-text); }
-.prices small { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-muted); margin-inline-end: 2px; }
-body.ar .prices small { font-family: var(--font-ar-body); letter-spacing: 0; font-size: 12px; }
-.prices .sep { color: var(--ink-muted); font-weight: 500; }
+.prices { display: flex; gap: 6px; flex: none; font-variant-numeric: tabular-nums; }
+.chip { display: inline-flex; flex-direction: column; align-items: center; min-width: 54px; padding: 3px 8px 2px; border-radius: 4px; background: var(--red); color: var(--on-wood); }
+.chip.alt { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 2px var(--red); }
+.chip .l { font-family: var(--font-slab); font-weight: 700; font-size: 11px; line-height: 14px; letter-spacing: .12em; text-transform: uppercase; }
+body.ar .chip .l { font-family: var(--font-ar-body); letter-spacing: 0; font-size: 12px; font-weight: 800; }
+.chip .n { font-family: var(--font-slab); font-weight: 700; font-size: 22px; line-height: 24px; }
 .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
 .badge { display: inline-flex; align-items: center; gap: 4px; font-family: var(--font-slab); font-weight: 700; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; }
 .badge svg { width: 13px; height: 13px; }
@@ -134,7 +136,7 @@ body.ar .sauce { font-family: var(--font-ar-body); letter-spacing: 0; font-weigh
 .sub { margin: 22px 0 0; text-align: center; font-family: var(--font-slab); font-weight: 700; font-size: 13px; letter-spacing: .2em; text-transform: uppercase; color: var(--green-text); }
 body.ar .sub { font-family: var(--font-ar-body); letter-spacing: 0; }
 
-footer { background: var(--green); color: var(--on-wood); border-top: 4px double var(--rope); }
+footer { background: var(--green); color: var(--on-wood); }
 footer .wrap { padding-block: 28px 36px; display: grid; gap: 14px; text-align: center; justify-items: center; }
 footer .big { font-family: var(--font-display); font-size: 26px; line-height: 1.2; }
 body.ar footer .big { font-family: var(--font-ar-display); font-weight: 700; }
@@ -190,6 +192,7 @@ body.ar .btn { font-family: var(--font-ar-body); letter-spacing: 0; font-weight:
   <p class="empty" id="empty" hidden></p>
 </main>
 
+<div class="checker full" aria-hidden="true"></div>
 <footer>
   <div class="wrap">
     <div class="big" id="t-hungry"></div>
@@ -302,9 +305,10 @@ body.ar .btn { font-family: var(--font-ar-body); letter-spacing: 0; font-weight:
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
 
   function priceHTML(it, t) {
-    if (it.p != null) return '<span class="prices">' + it.p + "</span>";
+    if (it.p != null) return '<span class="prices"><span class="chip"><span class="n">' + it.p + "</span></span></span>";
     return '<span class="prices" aria-label="' + t.single + " " + it.s + ", " + t.double + " " + it.d + '">' +
-      it.s + '<span class="sep">/</span>' + it.d + "</span>";
+      '<span class="chip"><span class="l">' + t.single + '</span><span class="n">' + it.s + "</span></span>" +
+      '<span class="chip alt"><span class="l">' + t.double + '</span><span class="n">' + it.d + "</span></span></span>";
   }
   function itemHTML(it, t) {
     var badges = (it.b || []).map(function (b) {
@@ -312,7 +316,7 @@ body.ar .btn { font-family: var(--font-ar-body); letter-spacing: 0; font-weight:
     }).join("");
     var name = it[lang];
     var hay = (it.en + " " + it.ar + " " + it.den + " " + it.dar + " " + (it.b || []).join(" ")).toLowerCase();
-    var body = '<div class="line"><h3>' + esc(name) + '</h3><span class="lead" aria-hidden="true"></span>' + priceHTML(it, t) + "</div>" +
+    var body = '<div class="line"><h3>' + esc(name) + '</h3>' + priceHTML(it, t) + "</div>" +
       (badges ? '<div class="tags">' + badges + "</div>" : "") +
       '<p class="desc">' + esc(lang === "ar" ? it.dar : it.den) + "</p>";
     if (it.img) return '<article class="item photo" data-hay="' + esc(hay) + '"><div class="body">' + body + '</div><span class="cutwrap"><img class="cut" src="' + IMG[it.img] + '" alt="' + esc(name) + '" loading="lazy"></span></article>';
@@ -322,13 +326,13 @@ body.ar .btn { font-family: var(--font-ar-body); letter-spacing: 0; font-weight:
     var h = '<section class="sec" id="' + sec.id + '" aria-labelledby="h-' + sec.id + '">' +
       '<div class="sec-head"><h2 id="h-' + sec.id + '">' + sec.title[lang] + "</h2>" +
       '<span class="kick">' + sec.kick[lang] + "</span>" +
-      "</div>" + (sec.fries ? '<p class="withfries">★ ' + t.withFries + " · " + t.single + " / " + t.double + " ★</p>" : "");
+      "</div>" + (sec.fries ? '<p class="withfries">★ ' + t.withFries + " ★</p>" : "");
     if (sec.aside) h += '<p class="aside">' + sec.aside[lang] + "</p>";
     if (sec.kind === "fries") {
       h += '<div class="sizes" data-hay="fries french بطاطس فرايز"><div class="size"><div class="l">' + t.medium + '</div><div class="n">25</div></div>' +
         '<div class="size"><div class="l">' + t.large + '</div><div class="n">50</div></div></div>';
     } else if (sec.kind === "extras") {
-      h += '<div class="items"><article class="item" data-hay="soda drink مشروب غازي"><div class="line"><h3>' + t.soda + '</h3><span class="lead" aria-hidden="true"></span><span class="prices">25</span></div></article></div>' +
+      h += '<div class="items"><article class="item" data-hay="soda drink مشروب غازي"><div class="line"><h3>' + t.soda + '</h3><span class="prices"><span class="chip"><span class="n">25</span></span></span></div></article></div>' +
         '<p class="sub">' + t.sauces + '</p><div class="sauces" data-hay="sauce صوص ' + SAUCES.map(function (s) { return s.join(" ").toLowerCase(); }).join(" ") + '">' +
         SAUCES.map(function (s) { return '<span class="sauce">' + (lang === "ar" ? s[1] : s[0]) + "</span>"; }).join("") + "</div>";
     } else {
