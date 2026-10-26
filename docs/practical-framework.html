@@ -54,20 +54,22 @@ section:first-child{border-top:0;padding-top:0}
 h2{font-size:clamp(21px,3.3vw,26px);font-weight:400;color:var(--accent);margin-top:2px}
 .sec-head{margin-bottom:26px}
 h3{font-size:16px;font-weight:700;margin-top:30px;color:var(--fg)}
-h3 + p,h3 + ul,h3 + ol,h3 + .table-wrap{margin-top:8px}
-p{text-align:justify}
+h3 + p,h3 + ul,h3 + ol{margin-top:6px}
+h3 + .table-wrap{margin-top:12px}
+p{text-align:justify;text-align-last:start}
+.steps p,.mech p,td p,figcaption p{text-align:start}
 p + p{margin-top:14px}
 .lede{text-align:justify}
 .lede + *{margin-top:22px}
 .tag{display:inline-block;font-size:11.5px;font-weight:600;color:var(--accent);border:1px solid var(--accent);border-radius:999px;padding:0 10px;line-height:1.75;vertical-align:middle;margin-inline-start:6px;white-space:nowrap}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
 .chips .tag{margin:0}
-.callout{margin-top:26px;padding:12px 18px;border-inline-start:3px solid var(--accent);background:var(--accent-soft);color:var(--accent-deep);font-size:14.5px;text-align:justify}
+.callout{margin-top:24px;padding:12px 18px;border-inline-start:3px solid var(--accent);background:var(--accent-soft);color:var(--accent-deep);font-size:14.5px;text-align:start;line-height:1.8}
 
 /* tables, as in the reference: purple header text, hairline rules, purple first column */
 .table-wrap{overflow-x:auto;margin-top:22px}
 table{width:100%;border-collapse:collapse;font-size:13.5px;line-height:1.8}
-th,td{text-align:right;vertical-align:top;padding:14px 10px;border-bottom:1px solid var(--rule)}
+th,td{text-align:start;vertical-align:top;padding:13px 10px;border-bottom:1px solid var(--rule);line-height:1.75}
 thead th{color:var(--accent);font-weight:600;font-size:13px;padding-top:0;padding-bottom:10px}
 tbody tr:first-child td{border-top:1px solid var(--rule-strong)}
 td.k{color:var(--accent);white-space:nowrap;font-weight:400}
@@ -75,10 +77,10 @@ td.num,th.num{font-variant-numeric:tabular-nums;white-space:nowrap}
 td .sub{display:block;font-size:12px;color:var(--muted);margin-top:2px}
 
 /* lists */
-.list{list-style:none;display:grid;gap:6px;margin-top:10px}
-.list li{position:relative;padding-inline-start:18px}
+.list{list-style:none;margin-top:8px;line-height:1.75}
+.list li{position:relative;padding-inline-start:18px;margin-top:5px;text-align:start}
 .list li::before{content:"";position:absolute;inset-inline-start:2px;top:.8em;width:7px;height:7px;border-radius:50%;background:var(--accent)}
-.list-cols{columns:2;column-gap:40px}
+.list-cols{columns:2;column-gap:36px}
 .list-cols li{break-inside:avoid}
 @media (max-width:520px){.list-cols{columns:1}}
 .num-list{list-style:none;counter-reset:n;display:grid;gap:6px;margin-top:10px}
@@ -86,20 +88,20 @@ td .sub{display:block;font-size:12px;color:var(--muted);margin-top:2px}
 .num-list li::before{content:counter(n) ".";position:absolute;inset-inline-start:0;color:var(--accent);font-weight:600;font-variant-numeric:tabular-nums}
 
 /* figures */
-figure{margin:24px 0 0;padding:0}
+figure{margin:22px 0 0;padding:0}
 figure .fig-title{font-size:12.5px;font-weight:600;color:var(--accent);margin-bottom:10px}
-figure .svg-wrap{overflow-x:auto;border:1px solid var(--rule);border-radius:4px;padding:14px 10px}
+figure .svg-wrap{overflow-x:auto;padding:6px 0}
 figure svg{display:block;width:100%;max-width:100%;height:auto;margin:0 auto;color:var(--fg)}
-figcaption{margin-top:10px;font-size:12.5px;color:var(--muted);text-align:justify}
+figcaption{margin-top:8px;font-size:12.5px;color:var(--muted);text-align:start;line-height:1.7}
 svg text{font-family:var(--font);direction:rtl;fill:currentColor}
-svg .t{font-weight:600;font-size:13px}
-svg .s{font-size:11px;fill:var(--muted)}
-svg .lbl{font-size:11px;font-weight:600;fill:var(--accent-deep)}
+svg .t{font-weight:600;font-size:14px}
+svg .s{font-size:11.5px;fill:var(--muted)}
+svg .lbl{font-size:11.5px;font-weight:600;fill:var(--accent-deep)}
 svg .box{fill:#fff;stroke:var(--rule-strong);stroke-width:1.2}
 svg .box-accent{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.3}
 svg .box-deep{fill:var(--accent-deep);stroke:var(--accent-deep);stroke-width:1.3}
 svg .on-deep{fill:#fff}
-svg .on-deep-s{font-size:11px;fill:#D9D0F5}
+svg .on-deep-s{font-size:11.5px;fill:#D9D0F5}
 svg .box-group{fill:none;stroke:var(--rule-strong);stroke-width:1;stroke-dasharray:4 3}
 svg .flow{fill:none;stroke:var(--accent);stroke-width:1.8}
 svg .link{fill:none;stroke:var(--rule-strong);stroke-width:1.2}
@@ -112,7 +114,7 @@ svg .big{font-size:30px;font-weight:700;fill:var(--accent)}
 .steps li{counter-increment:step;border:1px solid var(--rule);border-radius:4px;padding:12px 12px 10px;min-width:0}
 .steps li::before{content:counter(step);display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;font-size:12.5px;margin-bottom:6px}
 .steps li b{display:block;font-size:13.5px;font-weight:600}
-.steps li span{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+.steps li span{display:block;font-size:12px;color:var(--muted);margin-top:2px;line-height:1.6}
 @media (max-width:760px){.steps{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (max-width:520px){.steps{grid-template-columns:1fr}}
 
@@ -125,9 +127,9 @@ svg .big{font-size:30px;font-weight:700;fill:var(--accent)}
 .mech li::before{content:counter(m);font-weight:700;color:var(--accent);font-size:22px;line-height:1}
 .mech li .stage{font-size:11.5px;font-weight:600;color:var(--muted);margin-top:6px}
 .mech li b{display:block;font-size:14px;font-weight:600;margin-top:2px}
-.mech li p{font-size:13px;margin-top:6px;text-align:right}
-.mech li + li::after{content:"\2190";position:absolute;inset-inline-end:-13px;top:50%;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;transform:translateY(-50%);background:var(--accent);color:#fff;font-size:15px;line-height:1;z-index:1}
-@media (max-width:640px){.mech{grid-template-columns:1fr}.mech li{border-radius:0}.mech li:first-child{border-radius:4px 4px 0 0}.mech li:last-child{border-radius:0 0 4px 4px}.mech li + li{border-inline-start:1px solid var(--rule);border-top:0}.mech li + li::after{content:"\2193";inset-inline-end:auto;left:50%;top:-13px;transform:translateX(-50%)}}
+.mech li p{font-size:13px;margin-top:6px;text-align:start;line-height:1.7}
+.mech li + li::after{content:"\2190";position:absolute;inset-inline-start:-13px;top:50%;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;transform:translateY(-50%);background:var(--accent);color:#fff;font-size:15px;line-height:1;z-index:1}
+@media (max-width:640px){.mech{grid-template-columns:1fr}.mech li{border-radius:0}.mech li:first-child{border-radius:4px 4px 0 0}.mech li:last-child{border-radius:0 0 4px 4px}.mech li + li{border-inline-start:1px solid var(--rule);border-top:0}.mech li + li::after{content:"\2193";inset-inline-start:auto;left:50%;top:-13px;transform:translateX(-50%)}}
 
 /* org chart (04) */
 .org{margin-top:14px;display:grid;justify-items:center}
@@ -147,7 +149,7 @@ svg .big{font-size:30px;font-weight:700;fill:var(--accent)}
 .road .k{font-size:12px;font-weight:600;color:var(--accent)}
 .road li.goal .k{color:var(--accent-deep)}
 .road b{display:block;font-size:16px;font-weight:600}
-.road p{margin-top:2px;text-align:right}
+.road p{margin-top:2px;text-align:start}
 
 .two-col{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 32px}
 .two-col h3{margin-top:30px}
@@ -187,8 +189,7 @@ svg .big{font-size:30px;font-weight:700;fill:var(--accent)}
   h3{margin-top:22px}
   .lede + *{margin-top:16px}
   .sec-head{margin-bottom:20px}
-  .list{gap:3px}
-  .list-cols{columns:3;column-gap:24px}
+  .list li{margin-top:3px}
   .two-col{break-inside:avoid}
   .pill{font-size:10.5pt;padding:3px 16px}
   .cover .brand{font-size:17pt}
@@ -255,19 +256,23 @@ svg .big{font-size:30px;font-weight:700;fill:var(--accent)}
       <defs>
         <marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#8467E5"/></marker>
       </defs>
+      <!-- land flows -->
       <path class="flow" d="M380 76 V124 H640 V206" marker-end="url(#a1)"/>
       <path class="flow" d="M380 76 V124 H120 V206" marker-end="url(#a1)"/>
-      <g class="chip"><rect x="486" y="112" width="72" height="22" rx="3"/><text class="lbl" x="522" y="127" text-anchor="middle">تدفق الأرض</text></g>
-      <g class="chip"><rect x="202" y="112" width="72" height="22" rx="3"/><text class="lbl" x="238" y="127" text-anchor="middle">تدفق الأرض</text></g>
+      <g class="chip"><rect x="470" y="112" width="86" height="24" rx="4"/><text class="lbl" x="513" y="128" text-anchor="middle">تدفق الأرض</text></g>
+      <g class="chip"><rect x="204" y="112" width="86" height="24" rx="4"/><text class="lbl" x="247" y="128" text-anchor="middle">تدفق الأرض</text></g>
+      <!-- returns to the treasury -->
       <path class="flow" d="M640 286 V424 H450 V456" marker-end="url(#a1)"/>
       <path class="flow" d="M120 286 V424 H310 V456" marker-end="url(#a1)"/>
-      <g class="chip"><rect x="560" y="412" width="76" height="22" rx="3"/><text class="lbl" x="598" y="427" text-anchor="middle">حصة الأرض</text></g>
-      <g class="chip"><rect x="130" y="412" width="100" height="22" rx="3"/><text class="lbl" x="180" y="427" text-anchor="middle">30% من النوعي</text></g>
+      <g class="chip"><rect x="560" y="412" width="86" height="24" rx="4"/><text class="lbl" x="603" y="428" text-anchor="middle">حصة الأرض</text></g>
+      <g class="chip"><rect x="106" y="412" width="116" height="24" rx="4"/><text class="lbl" x="164" y="428" text-anchor="middle">30% من النوعي</text></g>
+      <!-- membership links -->
       <line class="link" x1="380" y1="124" x2="380" y2="178"/>
       <line class="link" x1="452" y1="250" x2="540" y2="250"/>
       <line class="link" x1="308" y1="250" x2="220" y2="250"/>
-      <line class="link" x1="428" y1="304" x2="488" y2="352"/>
-      <line class="link" x1="332" y1="304" x2="272" y2="352"/>
+      <path class="link" d="M380 322 V338 H472 V352"/>
+      <path class="link" d="M380 322 V338 H288 V352"/>
+      <!-- nodes -->
       <rect class="box-accent" x="268" y="18" width="224" height="58" rx="5"/>
       <text class="t" x="380" y="43" text-anchor="middle">هيئة عقارات الدولة</text>
       <text class="s" x="380" y="63" text-anchor="middle">الأرض = الوقود</text>
@@ -280,12 +285,12 @@ svg .big{font-size:30px;font-weight:700;fill:var(--accent)}
       <rect class="box" x="20" y="214" width="200" height="72" rx="5"/>
       <text class="t" x="120" y="245" text-anchor="middle">الكيان التطويري النوعي</text>
       <text class="s" x="120" y="267" text-anchor="middle">التطوير النوعي</text>
-      <rect class="box" x="470" y="352" width="160" height="52" rx="5"/>
-      <text class="t" x="550" y="374" text-anchor="middle">جهات مساندة</text>
-      <text class="s" x="550" y="393" text-anchor="middle">تمويل · تنظيم</text>
-      <rect class="box" x="130" y="352" width="160" height="52" rx="5"/>
-      <text class="t" x="210" y="374" text-anchor="middle">منصة رقمية</text>
-      <text class="s" x="210" y="393" text-anchor="middle">شفافية · بيانات</text>
+      <rect class="box" x="392" y="352" width="160" height="52" rx="5"/>
+      <text class="t" x="472" y="374" text-anchor="middle">جهات مساندة</text>
+      <text class="s" x="472" y="394" text-anchor="middle">تمويل · تنظيم</text>
+      <rect class="box" x="208" y="352" width="160" height="52" rx="5"/>
+      <text class="t" x="288" y="374" text-anchor="middle">منصة رقمية</text>
+      <text class="s" x="288" y="394" text-anchor="middle">شفافية · بيانات</text>
       <rect class="box-deep" x="268" y="458" width="224" height="60" rx="5"/>
       <text class="t on-deep" x="380" y="484" text-anchor="middle">خزينة الدولة</text>
       <text class="on-deep-s" x="380" y="505" text-anchor="middle">عائد المسارين</text>
@@ -308,66 +313,71 @@ svg .big{font-size:30px;font-weight:700;fill:var(--accent)}
   <figure>
     <div class="fig-title">المخطط 2 · البنية الهرمية والحوكمة</div>
     <div class="svg-wrap">
-    <svg viewBox="0 0 900 640" role="img" aria-label="خمسة مستويات من الرعاية الرئاسية العليا إلى الجهات الخدمية المساندة، مع خط تدقيق مستقل يرفع تقاريره مباشرة إلى القمة">
+    <svg viewBox="0 0 760 610" role="img" aria-label="خمسة مستويات من الرعاية الرئاسية العليا إلى الجهات الخدمية المساندة، مع خط تدقيق مستقل يرفع تقاريره مباشرة إلى القمة">
       <defs>
         <marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#8467E5"/></marker>
         <marker id="a2m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#6B6B7B"/></marker>
       </defs>
-      <path class="flow" d="M530 76 V108" marker-end="url(#a2)"/>
-      <path class="flow" d="M530 232 V266" marker-end="url(#a2)"/>
-      <path class="flow" d="M530 326 V340 H770 V368" marker-end="url(#a2)"/>
-      <path class="flow" d="M530 326 V368" marker-end="url(#a2)"/>
-      <path class="flow" d="M530 326 V340 H250 V368" marker-end="url(#a2)"/>
-      <line class="link" x1="770" y1="450" x2="770" y2="520"/>
-      <line class="link" x1="510" y1="450" x2="510" y2="520"/>
-      <line class="link" x1="250" y1="450" x2="250" y2="520"/>
-      <path class="flow" d="M660 410 H624" marker-end="url(#a2)"/>
-      <path class="flow" d="M700 370 V354 H300 V366" marker-end="url(#a2)"/>
-      <g class="chip"><rect x="622" y="416" width="38" height="20" rx="3"/><text class="lbl" x="641" y="430" text-anchor="middle">أرض</text></g>
-      <g class="chip"><rect x="470" y="344" width="38" height="20" rx="3"/><text class="lbl" x="489" y="358" text-anchor="middle">أرض</text></g>
-      <path class="dash" d="M65 300 V48 H326" marker-end="url(#a2m)"/>
-      <g class="chip"><rect x="150" y="36" width="96" height="22" rx="3"/><text class="s" x="198" y="51" text-anchor="middle">تقارير مباشرة</text></g>
-      <rect class="box-deep" x="330" y="18" width="400" height="58" rx="5"/>
-      <text class="on-deep-s" x="530" y="34" text-anchor="middle">المستوى 1</text>
-      <text class="t on-deep" x="530" y="52" text-anchor="middle">الرعاية الرئاسية العليا</text>
-      <text class="on-deep-s" x="530" y="69" text-anchor="middle">الزخم والسلطة وسرعة الحسم</text>
-      <rect class="box-group" x="230" y="108" width="600" height="124" rx="6"/>
-      <text class="s" x="810" y="124" text-anchor="end">المستوى 2</text>
-      <text class="t" x="530" y="130" text-anchor="middle">مجلس إدارة الكيان الناشئ</text>
-      <rect class="box" x="640" y="148" width="170" height="66" rx="4"/>
-      <text class="t" x="725" y="174" text-anchor="middle">الجهات الحكومية</text>
-      <text class="s" x="725" y="196" text-anchor="middle">الإسكان · التجارة · ذات العلاقة</text>
-      <rect class="box" x="445" y="148" width="170" height="66" rx="4"/>
-      <text class="t" x="530" y="174" text-anchor="middle">نقابة المهندسين</text>
-      <text class="s" x="530" y="196" text-anchor="middle">ضبط المعايير الفنية</text>
-      <rect class="box" x="250" y="148" width="170" height="66" rx="4"/>
-      <text class="t" x="335" y="174" text-anchor="middle">لجنة من مجلس الشعب</text>
-      <text class="s" x="335" y="196" text-anchor="middle">رقابة وتشريع</text>
-      <rect class="box-accent" x="330" y="266" width="400" height="60" rx="5"/>
-      <text class="s" x="530" y="283" text-anchor="middle">المستوى 3</text>
-      <text class="t" x="530" y="301" text-anchor="middle">الإدارة التنفيذية للكيان الناشئ</text>
-      <text class="s" x="530" y="318" text-anchor="middle">التنسيق وضمان اتساق المعايير</text>
-      <text class="s" x="880" y="362" text-anchor="end">المستوى 4 · الأذرع التنفيذية المتوازية</text>
-      <rect class="box" x="660" y="368" width="220" height="82" rx="4"/>
-      <text class="t" x="770" y="392" text-anchor="middle">هيئة عقارات الدولة</text>
-      <text class="s" x="770" y="412" text-anchor="middle">الذراع العقارية · الأرض كأصل</text>
-      <text class="s" x="770" y="432" text-anchor="middle">وقود المنظومة</text>
-      <rect class="box" x="400" y="368" width="220" height="82" rx="4"/>
-      <text class="t" x="510" y="392" text-anchor="middle">الكيان التطويري الميسور</text>
-      <text class="s" x="510" y="412" text-anchor="middle">الذراع الاجتماعية</text>
-      <text class="s" x="510" y="432" text-anchor="middle">الإسكان بالتقسيط الميسور</text>
-      <rect class="box" x="140" y="368" width="220" height="82" rx="4"/>
-      <text class="t" x="250" y="392" text-anchor="middle">الكيان التطويري النوعي</text>
-      <text class="s" x="250" y="412" text-anchor="middle">الذراع التجارية</text>
-      <text class="s" x="250" y="432" text-anchor="middle">التطوير النوعي</text>
-      <rect class="box" x="140" y="520" width="740" height="70" rx="5"/>
-      <text class="s" x="510" y="540" text-anchor="middle">المستوى 5</text>
-      <text class="t" x="510" y="558" text-anchor="middle">الجهات الخدمية المساندة</text>
-      <text class="s" x="510" y="578" text-anchor="middle">بنك التمويل والتحصيل · هيئة التنظيم المستقلة · المنصة الرقمية · شركة إعادة التمويل (لاحقا)</text>
-      <rect class="box" x="10" y="300" width="110" height="60" rx="4" stroke-dasharray="5 4"/>
-      <text class="t" x="65" y="324" text-anchor="middle">التدقيق المستقل</text>
-      <text class="s" x="65" y="345" text-anchor="middle">رقابة خارجية</text>
-      <text class="s" x="65" y="382" text-anchor="middle">خط مستقل</text>
+      <!-- level links -->
+      <path class="flow" d="M400 76 V108" marker-end="url(#a2)"/>
+      <path class="flow" d="M400 232 V266" marker-end="url(#a2)"/>
+      <path class="flow" d="M400 326 V340 H650 V368" marker-end="url(#a2)"/>
+      <path class="flow" d="M400 326 V368" marker-end="url(#a2)"/>
+      <path class="flow" d="M400 326 V340 H110 V368" marker-end="url(#a2)"/>
+      <!-- land arrows -->
+      <path class="flow" d="M550 410 H504" marker-end="url(#a2)"/>
+      <path class="flow" d="M650 450 V480 H110 V454" marker-end="url(#a2)"/>
+      <g class="chip"><rect x="505" y="422" width="44" height="22" rx="4"/><text class="lbl" x="527" y="437" text-anchor="middle">أرض</text></g>
+      <g class="chip"><rect x="358" y="469" width="44" height="22" rx="4"/><text class="lbl" x="380" y="484" text-anchor="middle">أرض</text></g>
+      <!-- independent audit line -->
+      <path class="dash" d="M95 268 V48 H196" marker-end="url(#a2m)"/>
+      <text class="s" x="148" y="99" text-anchor="middle">تقارير مباشرة</text>
+      <!-- L1 -->
+      <rect class="box-deep" x="200" y="18" width="400" height="58" rx="5"/>
+      <text class="on-deep-s" x="400" y="34" text-anchor="middle">المستوى 1</text>
+      <text class="t on-deep" x="400" y="52" text-anchor="middle">الرعاية الرئاسية العليا</text>
+      <text class="on-deep-s" x="400" y="69" text-anchor="middle">الزخم والسلطة وسرعة الحسم</text>
+      <!-- L2 -->
+      <rect class="box-group" x="100" y="108" width="600" height="124" rx="6"/>
+      <text class="s" x="684" y="124" text-anchor="start">المستوى 2</text>
+      <text class="t" x="400" y="130" text-anchor="middle">مجلس إدارة الكيان الناشئ</text>
+      <rect class="box" x="510" y="148" width="170" height="66" rx="4"/>
+      <text class="t" x="595" y="174" text-anchor="middle">الجهات الحكومية</text>
+      <text class="s" x="595" y="196" text-anchor="middle">الإسكان · التجارة · ذات العلاقة</text>
+      <rect class="box" x="315" y="148" width="170" height="66" rx="4"/>
+      <text class="t" x="400" y="174" text-anchor="middle">نقابة المهندسين</text>
+      <text class="s" x="400" y="196" text-anchor="middle">ضبط المعايير الفنية</text>
+      <rect class="box" x="120" y="148" width="170" height="66" rx="4"/>
+      <text class="t" x="205" y="174" text-anchor="middle">لجنة من مجلس الشعب</text>
+      <text class="s" x="205" y="196" text-anchor="middle">رقابة وتشريع</text>
+      <!-- L3 -->
+      <rect class="box-accent" x="200" y="266" width="400" height="60" rx="5"/>
+      <text class="s" x="400" y="283" text-anchor="middle">المستوى 3</text>
+      <text class="t" x="400" y="301" text-anchor="middle">الإدارة التنفيذية للكيان الناشئ</text>
+      <text class="s" x="400" y="318" text-anchor="middle">التنسيق وضمان اتساق المعايير</text>
+      <!-- audit -->
+      <rect class="box" x="20" y="268" width="150" height="58" rx="4" stroke-dasharray="5 4"/>
+      <text class="t" x="95" y="292" text-anchor="middle">التدقيق المستقل</text>
+      <text class="s" x="95" y="312" text-anchor="middle">رقابة خارجية · خط مستقل</text>
+      <!-- L4 -->
+      <text class="s" x="750" y="360" text-anchor="start">المستوى 4 · الأذرع التنفيذية المتوازية</text>
+      <rect class="box" x="550" y="368" width="200" height="82" rx="4"/>
+      <text class="t" x="650" y="392" text-anchor="middle">هيئة عقارات الدولة</text>
+      <text class="s" x="650" y="412" text-anchor="middle">الذراع العقارية · الأرض كأصل</text>
+      <text class="s" x="650" y="432" text-anchor="middle">وقود المنظومة</text>
+      <rect class="box" x="300" y="368" width="200" height="82" rx="4"/>
+      <text class="t" x="400" y="392" text-anchor="middle">الكيان التطويري الميسور</text>
+      <text class="s" x="400" y="412" text-anchor="middle">الذراع الاجتماعية</text>
+      <text class="s" x="400" y="432" text-anchor="middle">الإسكان بالتقسيط الميسور</text>
+      <rect class="box" x="10" y="368" width="200" height="82" rx="4"/>
+      <text class="t" x="110" y="392" text-anchor="middle">الكيان التطويري النوعي</text>
+      <text class="s" x="110" y="412" text-anchor="middle">الذراع التجارية</text>
+      <text class="s" x="110" y="432" text-anchor="middle">التطوير النوعي</text>
+      <!-- L5 -->
+      <rect class="box" x="10" y="520" width="740" height="70" rx="5"/>
+      <text class="s" x="380" y="540" text-anchor="middle">المستوى 5</text>
+      <text class="t" x="380" y="558" text-anchor="middle">الجهات الخدمية المساندة</text>
+      <text class="s" x="380" y="578" text-anchor="middle">بنك التمويل والتحصيل · هيئة التنظيم المستقلة · المنصة الرقمية · شركة إعادة التمويل (لاحقا)</text>
     </svg>
     </div>
     <figcaption>خمسة مستويات من الرعاية الرئاسية العليا إلى الجهات الخدمية المساندة. الأرض تنتقل من هيئة عقارات الدولة إلى الذراعين، والتدقيق المستقل يرفع تقاريره مباشرة إلى القمة خارج التسلسل التنفيذي.</figcaption>
@@ -393,41 +403,40 @@ svg .big{font-size:30px;font-weight:700;fill:var(--accent)}
     </table>
   </div>
 
-  <figure class="compact">
+  <figure>
     <div class="fig-title">المخطط 3 · الأرض وتوزيعها وعوائد الخزينة</div>
     <div class="svg-wrap">
-    <svg viewBox="0 0 760 560" role="img" aria-label="أرض حكومية خام تتاح بسعر اقتصادي وتوزع 70٪ للسكن الميسور و30٪ للتطوير النوعي والتجاري، ويعود من المسارين عائد إلى خزينة الدولة">
+    <svg viewBox="0 0 760 410" role="img" aria-label="أرض حكومية خام تتاح بسعر اقتصادي وتوزع 70٪ للسكن الميسور و30٪ للتطوير النوعي والتجاري، ويعود من المسارين عائد إلى خزينة الدولة">
       <defs>
         <marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#8467E5"/></marker>
       </defs>
-      <path class="flow" d="M380 104 V140 H580 V176" marker-end="url(#a3)"/>
-      <path class="flow" d="M380 104 V140 H180 V176" marker-end="url(#a3)"/>
-      <path class="flow" d="M580 344 V400 H440 V444" marker-end="url(#a3)"/>
-      <path class="flow" d="M180 344 V400 H320 V444" marker-end="url(#a3)"/>
-      <g class="chip"><rect x="542" y="364" width="76" height="22" rx="3"/><text class="lbl" x="580" y="379" text-anchor="middle">حصة الأرض</text></g>
-      <g class="chip"><rect x="130" y="364" width="100" height="22" rx="3"/><text class="lbl" x="180" y="379" text-anchor="middle">30% من النوعي</text></g>
-      <rect class="box-accent" x="230" y="18" width="300" height="86" rx="5"/>
-      <text class="s" x="380" y="38" text-anchor="middle">نقطة البداية</text>
-      <text class="t" x="380" y="58" text-anchor="middle">أرض حكومية خام</text>
-      <text class="s" x="380" y="76" text-anchor="middle">تتاح بسعر اقتصادي</text>
-      <text class="s" x="380" y="93" text-anchor="middle">نقطة الانطلاق ووقود المنظومة</text>
-      <rect class="box" x="420" y="176" width="320" height="168" rx="5"/>
-      <text class="big" x="580" y="222" text-anchor="middle">70٪</text>
-      <text class="t" x="580" y="250" text-anchor="middle">سكن ميسور</text>
-      <text class="s" x="580" y="272" text-anchor="middle">وحدات بأعداد كبيرة وسعر مناسب للمواطن</text>
-      <line class="link" x1="440" y1="288" x2="720" y2="288"/>
-      <text class="s" x="580" y="308" text-anchor="middle">حصة الأرض تعود للدولة</text>
-      <text class="s" x="580" y="326" text-anchor="middle">بعد سداد المستفيدين</text>
-      <rect class="box" x="20" y="176" width="320" height="168" rx="5"/>
-      <text class="big" x="180" y="222" text-anchor="middle">30٪</text>
-      <text class="t" x="180" y="250" text-anchor="middle">تطوير نوعي وتجاري</text>
-      <text class="s" x="180" y="272" text-anchor="middle">مشاريع ذات قيمة مرتفعة</text>
-      <line class="link" x1="40" y1="288" x2="320" y2="288"/>
-      <text class="s" x="180" y="308" text-anchor="middle">30% من عائدها يذهب</text>
-      <text class="s" x="180" y="326" text-anchor="middle">لخزينة الدولة</text>
-      <rect class="box-deep" x="230" y="444" width="300" height="86" rx="5"/>
-      <text class="t on-deep" x="380" y="480" text-anchor="middle">★ خزينة الدولة</text>
-      <text class="on-deep-s" x="380" y="506" text-anchor="middle">عائد من المسارين يعزز الموارد العامة</text>
+      <path class="flow" d="M380 80 V100 H580 V116" marker-end="url(#a3)"/>
+      <path class="flow" d="M380 80 V100 H180 V116" marker-end="url(#a3)"/>
+      <path class="flow" d="M580 266 V300 H440 V326" marker-end="url(#a3)"/>
+      <path class="flow" d="M180 266 V300 H320 V326" marker-end="url(#a3)"/>
+      <g class="chip"><rect x="467" y="288" width="86" height="24" rx="4"/><text class="lbl" x="510" y="304" text-anchor="middle">حصة الأرض</text></g>
+      <g class="chip"><rect x="192" y="288" width="116" height="24" rx="4"/><text class="lbl" x="250" y="304" text-anchor="middle">30% من النوعي</text></g>
+      <rect class="box-accent" x="230" y="10" width="300" height="70" rx="5"/>
+      <text class="s" x="380" y="30" text-anchor="middle">نقطة البداية · وقود المنظومة</text>
+      <text class="t" x="380" y="50" text-anchor="middle">أرض حكومية خام</text>
+      <text class="s" x="380" y="69" text-anchor="middle">تتاح بسعر اقتصادي</text>
+      <rect class="box" x="420" y="116" width="320" height="150" rx="5"/>
+      <text class="big" x="580" y="160" text-anchor="middle">70٪</text>
+      <text class="t" x="580" y="188" text-anchor="middle">سكن ميسور</text>
+      <text class="s" x="580" y="208" text-anchor="middle">وحدات بأعداد كبيرة وسعر مناسب للمواطن</text>
+      <line class="link" x1="440" y1="222" x2="720" y2="222"/>
+      <text class="s" x="580" y="243" text-anchor="middle">حصة الأرض تعود للدولة</text>
+      <text class="s" x="580" y="260" text-anchor="middle">بعد سداد المستفيدين</text>
+      <rect class="box" x="20" y="116" width="320" height="150" rx="5"/>
+      <text class="big" x="180" y="160" text-anchor="middle">30٪</text>
+      <text class="t" x="180" y="188" text-anchor="middle">تطوير نوعي وتجاري</text>
+      <text class="s" x="180" y="208" text-anchor="middle">مشاريع ذات قيمة مرتفعة</text>
+      <line class="link" x1="40" y1="222" x2="320" y2="222"/>
+      <text class="s" x="180" y="243" text-anchor="middle">30% من عائدها يذهب</text>
+      <text class="s" x="180" y="260" text-anchor="middle">لخزينة الدولة</text>
+      <rect class="box-deep" x="230" y="326" width="300" height="70" rx="5"/>
+      <text class="t on-deep" x="380" y="356" text-anchor="middle">★ خزينة الدولة</text>
+      <text class="on-deep-s" x="380" y="378" text-anchor="middle">عائد من المسارين يعزز الموارد العامة</text>
     </svg>
     </div>
     <figcaption>التدفق إلى الخزينة: حصة الأرض بعد سداد المستفيدين، و30% من النوعي إلى خزينة الدولة.</figcaption>
